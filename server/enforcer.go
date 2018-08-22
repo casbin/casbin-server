@@ -25,3 +25,7 @@ type Server struct{}
 func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*pb.NewEnforcerReply, error) {
 	return &pb.NewEnforcerReply{Handler: 0}, nil
 }
+
+func (s *Server) NewAdapter(ctx context.Context, in *pb.NewAdapterRequest) (*pb.NewAdapterReply, error) {
+	return &pb.NewAdapterReply{Handler: 0}, nil
+}
