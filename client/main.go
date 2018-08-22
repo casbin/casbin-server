@@ -16,7 +16,6 @@ package main
 
 import (
 	"log"
-	"os"
 	"time"
 
 	"golang.org/x/net/context"
@@ -38,16 +37,11 @@ func main() {
 	defer conn.Close()
 	c := pb.NewCasbinClient(conn)
 
-	// Contact the server and print out its response.
-	name := defaultName
-	if len(os.Args) > 1 {
-		name = os.Args[1]
-	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
+	r, err := c.NewEnforcer(ctx, &pb.NewEnforcerRequest{"", 0})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Fatalf("NewEnforcer() error: %v", err)
 	}
-	log.Printf("Greeting: %s", r.Message)
+	log.Printf("Enforer handle: %d", r.Handler)
 }

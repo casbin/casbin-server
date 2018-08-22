@@ -12,24 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-syntax = "proto3";
+package server
 
-option java_multiple_files = true;
-option java_package = "io.grpc.examples.proto";
-option java_outer_classname = "CasbinProto";
+import (
+	"golang.org/x/net/context"
+	pb "github.com/casbin/casbin-server/proto"
+)
 
-package proto;
+// Server is used to implement proto.CasbinServer.
+type Server struct{}
 
-// The Casbin service definition.
-service Casbin {
-  rpc NewEnforcer (NewEnforcerRequest) returns (NewEnforcerReply) {}
-}
-
-message NewEnforcerRequest {
-  string modelText = 1;
-  int32  adapterHandle = 2;
-}
-
-message NewEnforcerReply {
-  int32 handler = 1;
+func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*pb.NewEnforcerReply, error) {
+	return &pb.NewEnforcerReply{Handler: 0}, nil
 }

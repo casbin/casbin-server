@@ -20,7 +20,7 @@ import (
 	"log"
 	"net"
 
-	"golang.org/x/net/context"
+	"github.com/casbin/casbin-server/server"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	pb "github.com/casbin/casbin-server/proto"
@@ -30,21 +30,13 @@ const (
 	port = ":50051"
 )
 
-// server is used to implement proto.CasbinServer.
-type server struct{}
-
-// SayHello implements proto.CasbinServer.
-func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-	return &pb.HelloReply{Message: "Hello " + in.Name}, nil
-}
-
 func main() {
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterCasbinServer(s, &server{})
+	pb.RegisterCasbinServer(s, &server.Server{})
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
 	if err := s.Serve(lis); err != nil {
