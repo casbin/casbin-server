@@ -24,7 +24,17 @@ package proto;
 service Casbin {
   rpc NewEnforcer (NewEnforcerRequest) returns (NewEnforcerReply) {}
   rpc NewAdapter (NewAdapterRequest) returns (NewAdapterReply) {}
+
   rpc Enforce (EnforceRequest) returns (EnforceReply) {}
+
+  rpc LoadPolicy (LoadPolicyRequest) returns (AddPolicyReply) {}
+  rpc SavePolicy (LoadPolicyRequest) returns (AddPolicyReply) {}
+
+  rpc AddPolicy (AddPolicyRequest) returns (AddPolicyReply) {}
+  rpc RemovePolicy (AddPolicyRequest) returns (AddPolicyReply) {}
+
+  rpc AddNamedPolicy (AddNamedPolicyRequest) returns (AddPolicyReply) {}
+  rpc RemoveNamedPolicy (AddNamedPolicyRequest) returns (AddPolicyReply) {}
 }
 
 message NewEnforcerRequest {
@@ -55,4 +65,28 @@ message EnforceRequest {
 
 message EnforceReply {
   bool res = 1;
+}
+
+message LoadPolicyRequest {
+  int32  enforcerHandler = 1;
+}
+
+message AddPolicyRequest {
+  int32  enforcerHandler = 1;
+  string sub = 2;
+  string obj = 3;
+  string act = 4;
+}
+
+message AddPolicyReply {
+  bool res = 1;
+  string message = 2;
+}
+
+message AddNamedPolicyRequest {
+  int32  enforcerHandler = 1;
+  string ptype = 2;
+  string sub = 3;
+  string obj = 4;
+  string act = 5;
 }
