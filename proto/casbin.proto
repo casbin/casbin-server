@@ -24,6 +24,7 @@ package proto;
 service Casbin {
   rpc NewEnforcer (NewEnforcerRequest) returns (NewEnforcerReply) {}
   rpc NewAdapter (NewAdapterRequest) returns (NewAdapterReply) {}
+  rpc Enforce (EnforceRequest) returns (EnforceReply) {}
 }
 
 message NewEnforcerRequest {
@@ -43,4 +44,15 @@ message NewAdapterRequest {
 
 message NewAdapterReply {
   int32 handler = 1;
+}
+
+message EnforceRequest {
+  int32 enforcerHandler = 1;
+  string sub = 2;
+  string obj = 3;
+  string act = 4;
+}
+
+message EnforceReply {
+  bool res = 1;
 }
