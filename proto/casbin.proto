@@ -27,14 +27,14 @@ service Casbin {
 
   rpc Enforce (EnforceRequest) returns (EnforceReply) {}
 
-  rpc LoadPolicy (LoadPolicyRequest) returns (AddPolicyReply) {}
-  rpc SavePolicy (LoadPolicyRequest) returns (AddPolicyReply) {}
+  rpc LoadPolicy (EmptyRequest) returns (EmptyReply) {}
+  rpc SavePolicy (EmptyRequest) returns (EmptyReply) {}
 
-  rpc AddPolicy (AddPolicyRequest) returns (AddPolicyReply) {}
-  rpc RemovePolicy (AddPolicyRequest) returns (AddPolicyReply) {}
+  rpc AddPolicy (AddPolicyRequest) returns (EnforceReply) {}
+  rpc RemovePolicy (AddPolicyRequest) returns (EnforceReply) {}
 
-  rpc AddNamedPolicy (AddNamedPolicyRequest) returns (AddPolicyReply) {}
-  rpc RemoveNamedPolicy (AddNamedPolicyRequest) returns (AddPolicyReply) {}
+  rpc AddNamedPolicy (AddNamedPolicyRequest) returns (EnforceReply) {}
+  rpc RemoveNamedPolicy (AddNamedPolicyRequest) returns (EnforceReply) {}
 }
 
 message NewEnforcerRequest {
@@ -67,8 +67,11 @@ message EnforceReply {
   bool res = 1;
 }
 
-message LoadPolicyRequest {
-  int32  enforcerHandler = 1;
+message EmptyRequest {
+  int32 handler = 1;
+}
+
+message EmptyReply {
 }
 
 message AddPolicyRequest {
@@ -76,11 +79,6 @@ message AddPolicyRequest {
   string sub = 2;
   string obj = 3;
   string act = 4;
-}
-
-message AddPolicyReply {
-  bool res = 1;
-  string message = 2;
 }
 
 message AddNamedPolicyRequest {

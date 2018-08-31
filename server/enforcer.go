@@ -87,3 +87,25 @@ func (s *Server) Enforce(ctx context.Context, in *pb.EnforceRequest) (*pb.Enforc
 
 	return &pb.EnforceReply{Res: res}, nil
 }
+
+func (s *Server) LoadPolicy(ctx context.Context, in *pb.EmptyRequest) (*pb.EmptyReply, error) {
+	e, err := s.getEnforcer(int(in.Handler))
+	if err != nil {
+		return &pb.EmptyReply{}, err
+	}
+
+	err = e.LoadPolicy()
+
+	return &pb.EmptyReply{}, err
+}
+
+func (s *Server) SavePolicy(ctx context.Context, in *pb.EmptyRequest) (*pb.EmptyReply, error) {
+	e, err := s.getEnforcer(int(in.Handler))
+	if err != nil {
+		return &pb.EmptyReply{}, err
+	}
+
+	err = e.SavePolicy()
+
+	return &pb.EmptyReply{}, err
+}
