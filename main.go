@@ -20,10 +20,10 @@ import (
 	"log"
 	"net"
 
+	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin-server/server"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-	pb "github.com/casbin/casbin-server/proto"
 )
 
 const (

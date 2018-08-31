@@ -18,9 +18,9 @@ import (
 	"log"
 	"time"
 
+	pb "github.com/casbin/casbin-server/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	pb "github.com/casbin/casbin-server/proto"
 )
 
 const (

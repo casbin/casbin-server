@@ -15,8 +15,8 @@
 package server
 
 import (
-	"golang.org/x/net/context"
 	pb "github.com/casbin/casbin-server/proto"
+	"golang.org/x/net/context"
 )
 
 // Server is used to implement proto.CasbinServer.
