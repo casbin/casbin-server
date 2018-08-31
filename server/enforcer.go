@@ -15,17 +15,52 @@
 package server
 
 import (
+	"github.com/casbin/casbin"
 	pb "github.com/casbin/casbin-server/proto"
+	"github.com/casbin/casbin/persist"
+	"github.com/casbin/casbin/persist/file-adapter"
 	"golang.org/x/net/context"
 )
 
 // Server is used to implement proto.CasbinServer.
-type Server struct{}
+type Server struct{
+	enforcerMap map[int]casbin.Enforcer
+	adapterMap  map[int]persist.Adapter
+}
+
+func (s *Server) getAdapter(handle int) persist.Adapter {
+	if _, ok := s.adapterMap[handle]; ok {
+		return s.adapterMap[handle]
+	} else {
+		return nil
+	}
+}
+
+func (s *Server) addEnforcer(e casbin.Enforcer) int {
+	cnt := len(s.enforcerMap)
+	s.enforcerMap[cnt] = e
+	return cnt
+}
+
+func (s *Server) addAdapter(a persist.Adapter) int {
+	cnt := len(s.adapterMap)
+	s.adapterMap[cnt] = a
+	return cnt
+}
 
 func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*pb.NewEnforcerReply, error) {
-	return &pb.NewEnforcerReply{Handler: 0}, nil
+	a := s.getAdapter(int(in.AdapterHandle))
+	e := casbin.NewEnforcer(in.ModelText, a)
+
+	h := s.addEnforcer(*e)
+
+	return &pb.NewEnforcerReply{Handler: int32(h)}, nil
 }
 
 func (s *Server) NewAdapter(ctx context.Context, in *pb.NewAdapterRequest) (*pb.NewAdapterReply, error) {
-	return &pb.NewAdapterReply{Handler: 0}, nil
+	a := fileadapter.NewAdapter(in.ConnectString)
+
+	h := s.addAdapter(a)
+
+	return &pb.NewAdapterReply{Handler: int32(h)}, nil
 }
