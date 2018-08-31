@@ -15,6 +15,8 @@
 package server
 
 import (
+	"errors"
+
 	"github.com/casbin/casbin"
 	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/persist"
@@ -24,19 +26,27 @@ import (
 
 // Server is used to implement proto.CasbinServer.
 type Server struct{
-	enforcerMap map[int]casbin.Enforcer
+	enforcerMap map[int]*casbin.Enforcer
 	adapterMap  map[int]persist.Adapter
 }
 
-func (s *Server) getAdapter(handle int) persist.Adapter {
-	if _, ok := s.adapterMap[handle]; ok {
-		return s.adapterMap[handle]
+func (s *Server) getEnforcer(handle int) (*casbin.Enforcer, error) {
+	if _, ok := s.enforcerMap[handle]; ok {
+		return s.enforcerMap[handle], nil
 	} else {
-		return nil
+		return nil, errors.New("enforcer not found")
 	}
 }
 
-func (s *Server) addEnforcer(e casbin.Enforcer) int {
+func (s *Server) getAdapter(handle int) (persist.Adapter, error) {
+	if _, ok := s.adapterMap[handle]; ok {
+		return s.adapterMap[handle], nil
+	} else {
+		return nil, errors.New("adapter not found")
+	}
+}
+
+func (s *Server) addEnforcer(e *casbin.Enforcer) int {
 	cnt := len(s.enforcerMap)
 	s.enforcerMap[cnt] = e
 	return cnt
@@ -49,18 +59,31 @@ func (s *Server) addAdapter(a persist.Adapter) int {
 }
 
 func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*pb.NewEnforcerReply, error) {
-	a := s.getAdapter(int(in.AdapterHandle))
-	e := casbin.NewEnforcer(in.ModelText, a)
+	a, err := s.getAdapter(int(in.AdapterHandle))
+	if err != nil {
+		return &pb.NewEnforcerReply{Handler: 0}, err
+	}
 
-	h := s.addEnforcer(*e)
+	e := casbin.NewEnforcer(in.ModelText, a)
+	h := s.addEnforcer(e)
 
 	return &pb.NewEnforcerReply{Handler: int32(h)}, nil
 }
 
 func (s *Server) NewAdapter(ctx context.Context, in *pb.NewAdapterRequest) (*pb.NewAdapterReply, error) {
 	a := fileadapter.NewAdapter(in.ConnectString)
-
 	h := s.addAdapter(a)
 
 	return &pb.NewAdapterReply{Handler: int32(h)}, nil
+}
+
+func (s *Server) Enforce(ctx context.Context, in *pb.EnforceRequest) (*pb.EnforceReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.EnforceReply{Res: false}, err
+	}
+
+	res := e.Enforce(in.Sub, in.Obj, in.Act)
+
+	return &pb.EnforceReply{Res: res}, nil
 }
