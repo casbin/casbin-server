@@ -30,6 +30,15 @@ type Server struct{
 	adapterMap  map[int]persist.Adapter
 }
 
+func NewServer() *Server {
+	s := Server{}
+
+	s.enforcerMap = map[int]*casbin.Enforcer{}
+	s.adapterMap = map[int]persist.Adapter{}
+
+	return &s
+}
+
 func (s *Server) getEnforcer(handle int) (*casbin.Enforcer, error) {
 	if _, ok := s.enforcerMap[handle]; ok {
 		return s.enforcerMap[handle], nil

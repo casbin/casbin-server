@@ -12,34 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:generate protoc -I proto --go_out=plugins=grpc:proto proto/casbin.proto
-
-package main
+package server
 
 import (
-	"log"
-	"net"
+	"context"
+	"testing"
 
 	pb "github.com/casbin/casbin-server/proto"
-	"github.com/casbin/casbin-server/server"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 )
 
-const (
-	port = ":50051"
-)
+func TestRBACModel(t *testing.T) {
+	s := NewServer()
+	ctx := context.Background()
 
-func main() {
-	lis, err := net.Listen("tcp", port)
+	s.NewAdapter(ctx, &pb.NewAdapterRequest{DriverName: "file", ConnectString: "../examples/rbac_policy.csv"})
+
+	resp, err := s.NewEnforcer(ctx, &pb.NewEnforcerRequest{ModelText: "../examples/rbac_model.conf", AdapterHandle: 0})
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		t.Error(err)
 	}
-	s := grpc.NewServer()
-	pb.RegisterCasbinServer(s, server.NewServer())
-	// Register reflection service on gRPC server.
-	reflection.Register(s)
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+	e := resp.Handler
+
+	sub := "alice"
+	obj := "data1"
+	act := "read"
+	res := true
+
+	resp2, err := s.Enforce(ctx, &pb.EnforceRequest{EnforcerHandler: e, Sub: sub, Obj: obj, Act: act})
+	if err != nil {
+		t.Error(err)
+	}
+	myRes := resp2.Res
+
+	if myRes != res {
+		t.Errorf("%s, %s, %s: %t, supposed to be %t", sub, obj, act, myRes, res)
 	}
 }
