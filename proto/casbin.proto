@@ -25,16 +25,16 @@ service Casbin {
   rpc NewEnforcer (NewEnforcerRequest) returns (NewEnforcerReply) {}
   rpc NewAdapter (NewAdapterRequest) returns (NewAdapterReply) {}
 
-  rpc Enforce (EnforceRequest) returns (EnforceReply) {}
+  rpc Enforce (EnforceRequest) returns (BoolReply) {}
 
   rpc LoadPolicy (EmptyRequest) returns (EmptyReply) {}
   rpc SavePolicy (EmptyRequest) returns (EmptyReply) {}
 
-  rpc AddPolicy (AddPolicyRequest) returns (EnforceReply) {}
-  rpc RemovePolicy (AddPolicyRequest) returns (EnforceReply) {}
+  rpc AddPolicy (PolicyRequest) returns (BoolReply) {}
+  rpc RemovePolicy (PolicyRequest) returns (BoolReply) {}
 
-  rpc AddNamedPolicy (AddNamedPolicyRequest) returns (EnforceReply) {}
-  rpc RemoveNamedPolicy (AddNamedPolicyRequest) returns (EnforceReply) {}
+  rpc AddNamedPolicy (NamedPolicyRequest) returns (BoolReply) {}
+  rpc RemoveNamedPolicy (NamedPolicyRequest) returns (BoolReply) {}
 }
 
 message NewEnforcerRequest {
@@ -63,7 +63,7 @@ message EnforceRequest {
   string act = 4;
 }
 
-message EnforceReply {
+message BoolReply {
   bool res = 1;
 }
 
@@ -74,14 +74,14 @@ message EmptyRequest {
 message EmptyReply {
 }
 
-message AddPolicyRequest {
+message PolicyRequest {
   int32  enforcerHandler = 1;
   string sub = 2;
   string obj = 3;
   string act = 4;
 }
 
-message AddNamedPolicyRequest {
+message NamedPolicyRequest {
   int32  enforcerHandler = 1;
   string ptype = 2;
   string sub = 3;

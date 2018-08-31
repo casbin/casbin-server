@@ -77,15 +77,15 @@ func (s *Server) NewAdapter(ctx context.Context, in *pb.NewAdapterRequest) (*pb.
 	return &pb.NewAdapterReply{Handler: int32(h)}, nil
 }
 
-func (s *Server) Enforce(ctx context.Context, in *pb.EnforceRequest) (*pb.EnforceReply, error) {
+func (s *Server) Enforce(ctx context.Context, in *pb.EnforceRequest) (*pb.BoolReply, error) {
 	e, err := s.getEnforcer(int(in.EnforcerHandler))
 	if err != nil {
-		return &pb.EnforceReply{Res: false}, err
+		return &pb.BoolReply{Res: false}, err
 	}
 
 	res := e.Enforce(in.Sub, in.Obj, in.Act)
 
-	return &pb.EnforceReply{Res: res}, nil
+	return &pb.BoolReply{Res: res}, nil
 }
 
 func (s *Server) LoadPolicy(ctx context.Context, in *pb.EmptyRequest) (*pb.EmptyReply, error) {
@@ -108,4 +108,48 @@ func (s *Server) SavePolicy(ctx context.Context, in *pb.EmptyRequest) (*pb.Empty
 	err = e.SavePolicy()
 
 	return &pb.EmptyReply{}, err
+}
+
+func (s *Server) AddPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
+
+	res := e.AddPolicy(in.Sub, in.Obj, in.Act)
+
+	return &pb.BoolReply{Res: res}, err
+}
+
+func (s *Server) RemovePolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
+
+	res := e.RemovePolicy(in.Sub, in.Obj, in.Act)
+
+	return &pb.BoolReply{Res: res}, err
+}
+
+func (s *Server) AddNamedPolicy(ctx context.Context, in *pb.NamedPolicyRequest) (*pb.BoolReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
+
+	res := e.AddNamedPolicy(in.Ptype, in.Sub, in.Obj, in.Act)
+
+	return &pb.BoolReply{Res: res}, err
+}
+
+func (s *Server) RemoveNamedPolicy(ctx context.Context, in *pb.NamedPolicyRequest) (*pb.BoolReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
+
+	res := e.RemoveNamedPolicy(in.Ptype, in.Sub, in.Obj, in.Act)
+
+	return &pb.BoolReply{Res: res}, err
 }
