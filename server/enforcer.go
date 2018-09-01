@@ -25,7 +25,7 @@ import (
 )
 
 // Server is used to implement proto.CasbinServer.
-type Server struct{
+type Server struct {
 	enforcerMap map[int]*casbin.Enforcer
 	adapterMap  map[int]persist.Adapter
 }
@@ -80,7 +80,15 @@ func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*p
 }
 
 func (s *Server) NewAdapter(ctx context.Context, in *pb.NewAdapterRequest) (*pb.NewAdapterReply, error) {
-	a := fileadapter.NewAdapter(in.ConnectString)
+	var a persist.Adapter
+
+	switch in.DriverName {
+	case "file":
+		a = fileadapter.NewAdapter(in.ConnectString)
+	default:
+		return &pb.NewAdapterReply{}, errors.New("unknown driverName")
+	}
+
 	h := s.addAdapter(a)
 
 	return &pb.NewAdapterReply{Handler: int32(h)}, nil
