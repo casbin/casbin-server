@@ -16,6 +16,7 @@ package server
 
 import (
 	"context"
+	"io/ioutil"
 	"testing"
 
 	pb "github.com/casbin/casbin-server/proto"
@@ -27,7 +28,12 @@ func TestRBACModel(t *testing.T) {
 
 	s.NewAdapter(ctx, &pb.NewAdapterRequest{DriverName: "file", ConnectString: "../examples/rbac_policy.csv"})
 
-	resp, err := s.NewEnforcer(ctx, &pb.NewEnforcerRequest{ModelText: "../examples/rbac_model.conf", AdapterHandle: 0})
+	modelText, err := ioutil.ReadFile("../examples/rbac_model.conf")
+	if err != nil {
+		t.Error(err)
+	}
+
+	resp, err := s.NewEnforcer(ctx, &pb.NewEnforcerRequest{ModelText: string(modelText), AdapterHandle: 0})
 	if err != nil {
 		t.Error(err)
 	}
