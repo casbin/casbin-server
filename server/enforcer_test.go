@@ -26,7 +26,10 @@ func TestRBACModel(t *testing.T) {
 	s := NewServer()
 	ctx := context.Background()
 
-	s.NewAdapter(ctx, &pb.NewAdapterRequest{DriverName: "file", ConnectString: "../examples/rbac_policy.csv"})
+	_, err := s.NewAdapter(ctx, &pb.NewAdapterRequest{DriverName: "file", ConnectString: "../examples/rbac_policy.csv"})
+	if err != nil {
+		t.Error(err)
+	}
 
 	modelText, err := ioutil.ReadFile("../examples/rbac_model.conf")
 	if err != nil {
