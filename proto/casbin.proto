@@ -22,24 +22,54 @@ package proto;
 
 // The Casbin service definition.
 service Casbin {
-  rpc NewEnforcer (NewEnforcerRequest) returns (NewEnforcerReply) {}
-  rpc NewAdapter (NewAdapterRequest) returns (NewAdapterReply) {}
+  rpc NewEnforcer (NewEnforcerRequest) returns (NewEnforcerReply) {
+  }
+  rpc NewAdapter (NewAdapterRequest) returns (NewAdapterReply) {
+  }
 
-  rpc Enforce (EnforceRequest) returns (BoolReply) {}
+  rpc Enforce (EnforceRequest) returns (BoolReply) {
+  }
 
-  rpc LoadPolicy (EmptyRequest) returns (EmptyReply) {}
-  rpc SavePolicy (EmptyRequest) returns (EmptyReply) {}
+  rpc LoadPolicy (EmptyRequest) returns (EmptyReply) {
+  }
+  rpc SavePolicy (EmptyRequest) returns (EmptyReply) {
+  }
 
-  rpc AddPolicy (PolicyRequest) returns (BoolReply) {}
-  rpc RemovePolicy (PolicyRequest) returns (BoolReply) {}
+  rpc AddPolicy (PolicyRequest) returns (BoolReply) {
+  }
+  rpc RemovePolicy (PolicyRequest) returns (BoolReply) {
+  }
 
-  rpc AddNamedPolicy (NamedPolicyRequest) returns (BoolReply) {}
-  rpc RemoveNamedPolicy (NamedPolicyRequest) returns (BoolReply) {}
+  rpc AddNamedPolicy (NamedPolicyRequest) returns (BoolReply) {
+  }
+  rpc RemoveNamedPolicy (NamedPolicyRequest) returns (BoolReply) {
+  }
+
+  // management api group
+  rpc GetAllSubjects (GetSujectsRequest) returns (SubjectsReply) {
+  }
+  rpc GetAllNamedSubjects (GetSujectsRequest) returns (SubjectsReply) {
+  }
+  rpc GetAllObjects (GetObjectsRequest) returns (ObjectsReply) {
+  }
+  rpc GetAllNamedObjects (GetObjectsRequest) returns (ObjectsReply) {
+  }
+  rpc GetAllActions (GetActionsRequest) returns (ActionsReply) {
+  }
+  rpc GetAllNamedActions (GetActionsRequest) returns (ActionsReply) {
+  }
+  rpc GetAllRoles (GetRolesRequest) returns (RolesReply) {
+  }
+  rpc GetAllNamedRoles (GetRolesRequest) returns (RolesReply) {
+  }
+  rpc GetPolicy (GetPolicyRequest) returns (PolicyReply) {
+  }
+
 }
 
 message NewEnforcerRequest {
   string modelText = 1;
-  int32  adapterHandle = 2;
+  int32 adapterHandle = 2;
 }
 
 message NewEnforcerReply {
@@ -75,16 +105,67 @@ message EmptyReply {
 }
 
 message PolicyRequest {
-  int32  enforcerHandler = 1;
+  int32 enforcerHandler = 1;
   string sub = 2;
   string obj = 3;
   string act = 4;
 }
 
 message NamedPolicyRequest {
-  int32  enforcerHandler = 1;
+  int32 enforcerHandler = 1;
   string ptype = 2;
   string sub = 3;
   string obj = 4;
   string act = 5;
+}
+
+message GetSujectsRequest {
+  int32 enforcerHandler = 1;
+  string pType = 2;
+}
+
+message SubjectsReply {
+  repeated string subjects = 1;
+}
+
+message GetObjectsRequest {
+  int32 enforcerHandler = 1;
+  string pType = 2;
+}
+
+message ObjectsReply {
+  repeated string objects = 1;
+}
+
+message GetActionsRequest {
+  int32 enforcerHandler = 1;
+  string pType = 2;
+}
+
+message ActionsReply {
+  repeated string actions = 1;
+}
+
+message GetRolesRequest {
+  int32 enforcerHandler = 1;
+  string pType = 2;
+}
+
+message RolesReply {
+  repeated string roles = 1;
+}
+
+message GetPolicyRequest {
+  int32 enforcerHandler = 1;
+  string pType = 2;
+  int32 fieldIndex = 3;
+  repeated string fieldValues = 4;
+}
+
+message PolicyReply {
+  message item {
+    repeated string items = 1;
+  }
+
+  repeated item policy = 1;
 }
