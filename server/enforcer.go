@@ -16,11 +16,9 @@ package server
 
 import (
 	"errors"
-
 	"github.com/casbin/casbin"
 	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/persist"
-	"github.com/casbin/casbin/persist/file-adapter"
 	"golang.org/x/net/context"
 )
 
@@ -80,13 +78,9 @@ func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*p
 }
 
 func (s *Server) NewAdapter(ctx context.Context, in *pb.NewAdapterRequest) (*pb.NewAdapterReply, error) {
-	var a persist.Adapter
-
-	switch in.DriverName {
-	case "file":
-		a = fileadapter.NewAdapter(in.ConnectString)
-	default:
-		return &pb.NewAdapterReply{}, errors.New("unknown driverName")
+	a, err := newAdapter(in)
+	if err != nil {
+		return nil, err
 	}
 
 	h := s.addAdapter(a)
