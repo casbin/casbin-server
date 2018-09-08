@@ -20,6 +20,8 @@ import (
 	"testing"
 
 	pb "github.com/casbin/casbin-server/proto"
+	"github.com/casbin/casbin/util"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRBACModel(t *testing.T) {
@@ -56,4 +58,211 @@ func TestRBACModel(t *testing.T) {
 	if myRes != res {
 		t.Errorf("%s, %s, %s: %t, supposed to be %t", sub, obj, act, myRes, res)
 	}
+}
+
+type testEngine struct {
+	s   *Server
+	ctx context.Context
+	h   int32
+}
+
+func newTestEngine(t *testing.T, from, connectStr string) *testEngine {
+	s := NewServer()
+	ctx := context.Background()
+
+	_, err := s.NewAdapter(ctx, &pb.NewAdapterRequest{DriverName: from, ConnectString: connectStr})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	modelText, err := ioutil.ReadFile("../examples/rbac_model.conf")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := s.NewEnforcer(ctx, &pb.NewEnforcerRequest{ModelText: string(modelText), AdapterHandle: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return &testEngine{s: s, ctx: ctx, h: resp.Handler}
+}
+
+func testStringList(t *testing.T, title string, f func() []string, res []string) {
+	t.Helper()
+	myRes := f()
+	t.Log(title+": ", myRes)
+
+	if !util.ArrayEquals(res, myRes) {
+		t.Error(title+": ", myRes, ", supposed to be ", res)
+	}
+}
+
+func extractFromArrayReply(reply *pb.ArrayReply) func() []string {
+	return func() []string {
+		return reply.Array
+	}
+}
+
+func TestGetList(t *testing.T) {
+	e := newTestEngine(t, "file", "../examples/rbac_policy.csv")
+
+	subjects, err := e.s.GetAllSubjects(e.ctx, &pb.EmptyRequest{Handler: e.h})
+	if err != nil {
+		t.Fatal(err)
+	}
+	testStringList(t, "Subjects", extractFromArrayReply(subjects), []string{"alice", "bob", "data2_admin"})
+
+	objects, err := e.s.GetAllObjects(e.ctx, &pb.EmptyRequest{Handler: e.h})
+	if err != nil {
+		t.Fatal(err)
+	}
+	testStringList(t, "Objects", extractFromArrayReply(objects), []string{"data1", "data2"})
+
+	actions, err := e.s.GetAllActions(e.ctx, &pb.EmptyRequest{Handler: e.h})
+	if err != nil {
+		t.Fatal(err)
+	}
+	testStringList(t, "Actions", extractFromArrayReply(actions), []string{"read", "write"})
+
+	roles, err := e.s.GetAllRoles(e.ctx, &pb.EmptyRequest{Handler: e.h})
+	if err != nil {
+		t.Fatal(err)
+	}
+	testStringList(t, "Roles", extractFromArrayReply(roles), []string{"data2_admin"})
+}
+
+func extractFromArray2DReply(reply *pb.Array2DReply) [][]string {
+	array2d := make([][]string, len(reply.D2))
+	for i := 0; i < len(reply.D2); i++ {
+		array2d[i] = reply.D2[i].D1
+	}
+
+	return array2d
+}
+
+func testGetPolicy(t *testing.T, e *testEngine, res [][]string) {
+	t.Helper()
+	req := &pb.EmptyRequest{Handler: e.h}
+	reply, err := e.s.GetPolicy(e.ctx, req)
+	assert.NoError(t, err)
+
+	myRes := extractFromArray2DReply(reply)
+	t.Log("Policy: ", myRes)
+
+	if !util.Array2DEquals(res, myRes) {
+		t.Error("Policy: ", myRes, ", supposed to be ", res)
+	}
+}
+
+func testGetFilteredPolicy(t *testing.T, e *testEngine, fieldIndex int, res [][]string, fieldValues ...string) {
+	t.Helper()
+	req := &pb.GetPolicyRequest{
+		EnforcerHandler: e.h, FieldIndex: int32(fieldIndex), FieldValues: fieldValues}
+	reply, err := e.s.GetFilteredPolicy(e.ctx, req)
+	assert.NoError(t, err)
+
+	myRes := extractFromArray2DReply(reply)
+	t.Log("Policy for ", util.ParamsToString(req.FieldValues...), ": ", myRes)
+
+	if !util.Array2DEquals(res, myRes) {
+		t.Error("Policy for ", util.ParamsToString(req.FieldValues...), ": ", myRes, ", supposed to be ", res)
+	}
+}
+
+func testGetGroupingPolicy(t *testing.T, e *testEngine, res [][]string) {
+	t.Helper()
+	req := &pb.EmptyRequest{Handler: e.h}
+	reply, err := e.s.GetGroupingPolicy(e.ctx, req)
+	assert.NoError(t, err)
+
+	myRes := extractFromArray2DReply(reply)
+	t.Log("Grouping policy: ", myRes)
+
+	if !util.Array2DEquals(res, myRes) {
+		t.Error("Grouping policy: ", myRes, ", supposed to be ", res)
+	}
+}
+
+func testGetFilteredGroupingPolicy(t *testing.T, e *testEngine, fieldIndex int, res [][]string, fieldValues ...string) {
+	t.Helper()
+	req := &pb.GetPolicyRequest{
+		EnforcerHandler: e.h, FieldIndex: int32(fieldIndex), FieldValues: fieldValues}
+	reply, err := e.s.GetFilteredGroupingPolicy(e.ctx, req)
+	assert.NoError(t, err)
+
+	myRes := extractFromArray2DReply(reply)
+	t.Log("Grouping policy for ", util.ParamsToString(fieldValues...), ": ", myRes)
+
+	if !util.Array2DEquals(res, myRes) {
+		t.Error("Grouping policy for ", util.ParamsToString(fieldValues...), ": ", myRes, ", supposed to be ", res)
+	}
+}
+
+func testHasPolicy(t *testing.T, e *testEngine, policy []string, res bool) {
+	t.Helper()
+	req := &pb.ExistRequest{EnforcerHandler: e.h, Ptype: "p", Policy: policy}
+	reply, err := e.s.HasPolicy(e.ctx, req)
+	assert.NoError(t, err)
+
+	myRes := reply.Res
+	t.Log("Has policy ", util.ArrayToString(policy), ": ", myRes)
+
+	if res != myRes {
+		t.Error("Has policy ", util.ArrayToString(policy), ": ", myRes, ", supposed to be ", res)
+	}
+}
+
+func testHasGroupingPolicy(t *testing.T, e *testEngine, policy []string, res bool) {
+	t.Helper()
+	req := &pb.ExistRequest{EnforcerHandler: e.h, Ptype: "g", Policy: policy}
+	reply, err := e.s.HasNamedGroupingPolicy(e.ctx, req)
+	assert.NoError(t, err)
+
+	myRes := reply.Res
+	t.Log("Has grouping policy ", util.ArrayToString(policy), ": ", myRes)
+
+	if res != myRes {
+		t.Error("Has grouping policy ", util.ArrayToString(policy), ": ", myRes, ", supposed to be ", res)
+	}
+}
+
+func TestGetPolicyAPI(t *testing.T) {
+	e := newTestEngine(t, "file", "../examples/rbac_policy.csv")
+
+	testGetPolicy(t, e, [][]string{
+		{"alice", "data1", "read"},
+		{"bob", "data2", "write"},
+		{"data2_admin", "data2", "read"},
+		{"data2_admin", "data2", "write"}})
+
+	testGetFilteredPolicy(t, e, 0, [][]string{{"alice", "data1", "read"}}, "alice")
+	testGetFilteredPolicy(t, e, 0, [][]string{{"bob", "data2", "write"}}, "bob")
+	testGetFilteredPolicy(t, e, 0, [][]string{{"data2_admin", "data2", "read"}, {"data2_admin", "data2", "write"}}, "data2_admin")
+	testGetFilteredPolicy(t, e, 1, [][]string{{"alice", "data1", "read"}}, "data1")
+	testGetFilteredPolicy(t, e, 1, [][]string{{"bob", "data2", "write"}, {"data2_admin", "data2", "read"}, {"data2_admin", "data2", "write"}}, "data2")
+	testGetFilteredPolicy(t, e, 2, [][]string{{"alice", "data1", "read"}, {"data2_admin", "data2", "read"}}, "read")
+	testGetFilteredPolicy(t, e, 2, [][]string{{"bob", "data2", "write"}, {"data2_admin", "data2", "write"}}, "write")
+
+	testGetFilteredPolicy(t, e, 0, [][]string{{"data2_admin", "data2", "read"}, {"data2_admin", "data2", "write"}}, "data2_admin", "data2")
+	// Note: "" (empty string) in fieldValues means matching all values.
+	testGetFilteredPolicy(t, e, 0, [][]string{{"data2_admin", "data2", "read"}}, "data2_admin", "", "read")
+	testGetFilteredPolicy(t, e, 1, [][]string{{"bob", "data2", "write"}, {"data2_admin", "data2", "write"}}, "data2", "write")
+
+	testHasPolicy(t, e, []string{"alice", "data1", "read"}, true)
+	testHasPolicy(t, e, []string{"bob", "data2", "write"}, true)
+	testHasPolicy(t, e, []string{"alice", "data2", "read"}, false)
+	testHasPolicy(t, e, []string{"bob", "data3", "write"}, false)
+
+	testGetGroupingPolicy(t, e, [][]string{{"alice", "data2_admin"}})
+
+	testGetFilteredGroupingPolicy(t, e, 0, [][]string{{"alice", "data2_admin"}}, "alice")
+	testGetFilteredGroupingPolicy(t, e, 0, [][]string{}, "bob")
+	testGetFilteredGroupingPolicy(t, e, 1, [][]string{}, "data1_admin")
+	testGetFilteredGroupingPolicy(t, e, 1, [][]string{{"alice", "data2_admin"}}, "data2_admin")
+	// Note: "" (empty string) in fieldValues means matching all values.
+	testGetFilteredGroupingPolicy(t, e, 0, [][]string{{"alice", "data2_admin"}}, "", "data2_admin")
+
+	testHasGroupingPolicy(t, e, []string{"alice", "data2_admin"}, true)
+	testHasGroupingPolicy(t, e, []string{"bob", "data2_admin"}, false)
 }

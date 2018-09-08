@@ -46,25 +46,44 @@ service Casbin {
   }
 
   // management api group
-  rpc GetAllSubjects (GetSujectsRequest) returns (SubjectsReply) {
+  rpc GetAllSubjects (EmptyRequest) returns (ArrayReply) {
   }
-  rpc GetAllNamedSubjects (GetSujectsRequest) returns (SubjectsReply) {
+  rpc GetAllNamedSubjects (SimpleGetRequest) returns (ArrayReply) {
   }
-  rpc GetAllObjects (GetObjectsRequest) returns (ObjectsReply) {
+  rpc GetAllObjects (EmptyRequest) returns (ArrayReply) {
   }
-  rpc GetAllNamedObjects (GetObjectsRequest) returns (ObjectsReply) {
+  rpc GetAllNamedObjects (SimpleGetRequest) returns (ArrayReply) {
   }
-  rpc GetAllActions (GetActionsRequest) returns (ActionsReply) {
+  rpc GetAllActions (EmptyRequest) returns (ArrayReply) {
   }
-  rpc GetAllNamedActions (GetActionsRequest) returns (ActionsReply) {
+  rpc GetAllNamedActions (SimpleGetRequest) returns (ArrayReply) {
   }
-  rpc GetAllRoles (GetRolesRequest) returns (RolesReply) {
+  rpc GetAllRoles (EmptyRequest) returns (ArrayReply) {
   }
-  rpc GetAllNamedRoles (GetRolesRequest) returns (RolesReply) {
+  rpc GetAllNamedRoles (SimpleGetRequest) returns (ArrayReply) {
   }
-  rpc GetPolicy (GetPolicyRequest) returns (PolicyReply) {
+  rpc GetPolicy (EmptyRequest) returns (Array2DReply) {
   }
-
+  rpc GetFilteredPolicy (GetPolicyRequest) returns (Array2DReply) {
+  }
+  rpc GetNamedPolicy (GetPolicyRequest) returns (Array2DReply) {
+  }
+  rpc GetFilteredNamedPolicy (GetPolicyRequest) returns (Array2DReply) {
+  }
+  rpc GetGroupingPolicy (EmptyRequest) returns (Array2DReply) {
+  }
+  rpc GetFilteredGroupingPolicy (GetPolicyRequest) returns (Array2DReply) {
+  }
+  rpc GetFilteredNamedGroupingPolicy (GetPolicyRequest) returns (Array2DReply) {
+  }
+  rpc HasPolicy (ExistRequest) returns (BoolReply) {
+  }
+  rpc HasNamedPolicy (ExistRequest) returns (BoolReply) {
+  }
+  rpc HasGroupingPolicy (ExistRequest) returns (BoolReply) {
+  }
+  rpc HasNamedGroupingPolicy (ExistRequest) returns (BoolReply) {
+  }
 }
 
 message NewEnforcerRequest {
@@ -119,40 +138,13 @@ message NamedPolicyRequest {
   string act = 5;
 }
 
-message GetSujectsRequest {
+message SimpleGetRequest {
   int32 enforcerHandler = 1;
   string pType = 2;
 }
 
-message SubjectsReply {
-  repeated string subjects = 1;
-}
-
-message GetObjectsRequest {
-  int32 enforcerHandler = 1;
-  string pType = 2;
-}
-
-message ObjectsReply {
-  repeated string objects = 1;
-}
-
-message GetActionsRequest {
-  int32 enforcerHandler = 1;
-  string pType = 2;
-}
-
-message ActionsReply {
-  repeated string actions = 1;
-}
-
-message GetRolesRequest {
-  int32 enforcerHandler = 1;
-  string pType = 2;
-}
-
-message RolesReply {
-  repeated string roles = 1;
+message ArrayReply {
+  repeated string array = 1;
 }
 
 message GetPolicyRequest {
@@ -162,10 +154,16 @@ message GetPolicyRequest {
   repeated string fieldValues = 4;
 }
 
-message PolicyReply {
-  message item {
-    repeated string items = 1;
+message Array2DReply {
+  message d {
+    repeated string d1 = 1;
   }
 
-  repeated item policy = 1;
+  repeated d d2 = 1;
+}
+
+message ExistRequest {
+  int32 enforcerHandler = 1;
+  string ptype = 2;
+  repeated string policy = 3;
 }
