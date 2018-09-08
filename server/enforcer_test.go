@@ -57,3 +57,31 @@ func TestRBACModel(t *testing.T) {
 		t.Errorf("%s, %s, %s: %t, supposed to be %t", sub, obj, act, myRes, res)
 	}
 }
+
+type testEngine struct {
+	s   *Server
+	ctx context.Context
+	h   int32
+}
+
+func newTestEngine(t *testing.T, from, connectStr string) *testEngine {
+	s := NewServer()
+	ctx := context.Background()
+
+	_, err := s.NewAdapter(ctx, &pb.NewAdapterRequest{DriverName: from, ConnectString: connectStr})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	modelText, err := ioutil.ReadFile("../examples/rbac_model.conf")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := s.NewEnforcer(ctx, &pb.NewEnforcerRequest{ModelText: string(modelText), AdapterHandle: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return &testEngine{s: s, ctx: ctx, h: resp.Handler}
+}

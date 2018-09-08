@@ -35,11 +35,32 @@ service Casbin {
 
   rpc AddNamedPolicy (NamedPolicyRequest) returns (BoolReply) {}
   rpc RemoveNamedPolicy (NamedPolicyRequest) returns (BoolReply) {}
+
+  // management api group
+  rpc GetAllSubjects (EmptyRequest) returns (ArrayReply) {}
+  rpc GetAllNamedSubjects (SimpleGetRequest) returns (ArrayReply) {}
+  rpc GetAllObjects (EmptyRequest) returns (ArrayReply) {}
+  rpc GetAllNamedObjects (SimpleGetRequest) returns (ArrayReply) {}
+  rpc GetAllActions (EmptyRequest) returns (ArrayReply) {}
+  rpc GetAllNamedActions (SimpleGetRequest) returns (ArrayReply) {}
+  rpc GetAllRoles (EmptyRequest) returns (ArrayReply) {}
+  rpc GetAllNamedRoles (SimpleGetRequest) returns (ArrayReply) {}
+  rpc GetPolicy (EmptyRequest) returns (Array2DReply) {}
+  rpc GetFilteredPolicy (GetPolicyRequest) returns (Array2DReply) {}
+  rpc GetNamedPolicy (GetPolicyRequest) returns (Array2DReply) {}
+  rpc GetFilteredNamedPolicy (GetPolicyRequest) returns (Array2DReply) {}
+  rpc GetGroupingPolicy (EmptyRequest) returns (Array2DReply) {}
+  rpc GetFilteredGroupingPolicy (GetPolicyRequest) returns (Array2DReply) {}
+  rpc GetFilteredNamedGroupingPolicy (GetPolicyRequest) returns (Array2DReply) {}
+  rpc HasPolicy (ExistRequest) returns (BoolReply) {}
+  rpc HasNamedPolicy (ExistRequest) returns (BoolReply) {}
+  rpc HasGroupingPolicy (ExistRequest) returns (BoolReply) {}
+  rpc HasNamedGroupingPolicy (ExistRequest) returns (BoolReply) {}
 }
 
 message NewEnforcerRequest {
   string modelText = 1;
-  int32  adapterHandle = 2;
+  int32 adapterHandle = 2;
 }
 
 message NewEnforcerReply {
@@ -75,16 +96,46 @@ message EmptyReply {
 }
 
 message PolicyRequest {
-  int32  enforcerHandler = 1;
+  int32 enforcerHandler = 1;
   string sub = 2;
   string obj = 3;
   string act = 4;
 }
 
 message NamedPolicyRequest {
-  int32  enforcerHandler = 1;
+  int32 enforcerHandler = 1;
   string ptype = 2;
   string sub = 3;
   string obj = 4;
   string act = 5;
+}
+
+message SimpleGetRequest {
+  int32 enforcerHandler = 1;
+  string pType = 2;
+}
+
+message ArrayReply {
+  repeated string array = 1;
+}
+
+message GetPolicyRequest {
+  int32 enforcerHandler = 1;
+  string pType = 2;
+  int32 fieldIndex = 3;
+  repeated string fieldValues = 4;
+}
+
+message Array2DReply {
+  message d {
+    repeated string d1 = 1;
+  }
+
+  repeated d d2 = 1;
+}
+
+message ExistRequest {
+  int32 enforcerHandler = 1;
+  string ptype = 2;
+  repeated string policy = 3;
 }
