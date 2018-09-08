@@ -22,68 +22,40 @@ package proto;
 
 // The Casbin service definition.
 service Casbin {
-  rpc NewEnforcer (NewEnforcerRequest) returns (NewEnforcerReply) {
-  }
-  rpc NewAdapter (NewAdapterRequest) returns (NewAdapterReply) {
-  }
+  rpc NewEnforcer (NewEnforcerRequest) returns (NewEnforcerReply) {}
+  rpc NewAdapter (NewAdapterRequest) returns (NewAdapterReply) {}
 
-  rpc Enforce (EnforceRequest) returns (BoolReply) {
-  }
+  rpc Enforce (EnforceRequest) returns (BoolReply) {}
 
-  rpc LoadPolicy (EmptyRequest) returns (EmptyReply) {
-  }
-  rpc SavePolicy (EmptyRequest) returns (EmptyReply) {
-  }
+  rpc LoadPolicy (EmptyRequest) returns (EmptyReply) {}
+  rpc SavePolicy (EmptyRequest) returns (EmptyReply) {}
 
-  rpc AddPolicy (PolicyRequest) returns (BoolReply) {
-  }
-  rpc RemovePolicy (PolicyRequest) returns (BoolReply) {
-  }
+  rpc AddPolicy (PolicyRequest) returns (BoolReply) {}
+  rpc RemovePolicy (PolicyRequest) returns (BoolReply) {}
 
-  rpc AddNamedPolicy (NamedPolicyRequest) returns (BoolReply) {
-  }
-  rpc RemoveNamedPolicy (NamedPolicyRequest) returns (BoolReply) {
-  }
+  rpc AddNamedPolicy (NamedPolicyRequest) returns (BoolReply) {}
+  rpc RemoveNamedPolicy (NamedPolicyRequest) returns (BoolReply) {}
 
   // management api group
-  rpc GetAllSubjects (EmptyRequest) returns (ArrayReply) {
-  }
-  rpc GetAllNamedSubjects (SimpleGetRequest) returns (ArrayReply) {
-  }
-  rpc GetAllObjects (EmptyRequest) returns (ArrayReply) {
-  }
-  rpc GetAllNamedObjects (SimpleGetRequest) returns (ArrayReply) {
-  }
-  rpc GetAllActions (EmptyRequest) returns (ArrayReply) {
-  }
-  rpc GetAllNamedActions (SimpleGetRequest) returns (ArrayReply) {
-  }
-  rpc GetAllRoles (EmptyRequest) returns (ArrayReply) {
-  }
-  rpc GetAllNamedRoles (SimpleGetRequest) returns (ArrayReply) {
-  }
-  rpc GetPolicy (EmptyRequest) returns (Array2DReply) {
-  }
-  rpc GetFilteredPolicy (GetPolicyRequest) returns (Array2DReply) {
-  }
-  rpc GetNamedPolicy (GetPolicyRequest) returns (Array2DReply) {
-  }
-  rpc GetFilteredNamedPolicy (GetPolicyRequest) returns (Array2DReply) {
-  }
-  rpc GetGroupingPolicy (EmptyRequest) returns (Array2DReply) {
-  }
-  rpc GetFilteredGroupingPolicy (GetPolicyRequest) returns (Array2DReply) {
-  }
-  rpc GetFilteredNamedGroupingPolicy (GetPolicyRequest) returns (Array2DReply) {
-  }
-  rpc HasPolicy (ExistRequest) returns (BoolReply) {
-  }
-  rpc HasNamedPolicy (ExistRequest) returns (BoolReply) {
-  }
-  rpc HasGroupingPolicy (ExistRequest) returns (BoolReply) {
-  }
-  rpc HasNamedGroupingPolicy (ExistRequest) returns (BoolReply) {
-  }
+  rpc GetAllSubjects (EmptyRequest) returns (ArrayReply) {}
+  rpc GetAllNamedSubjects (SimpleGetRequest) returns (ArrayReply) {}
+  rpc GetAllObjects (EmptyRequest) returns (ArrayReply) {}
+  rpc GetAllNamedObjects (SimpleGetRequest) returns (ArrayReply) {}
+  rpc GetAllActions (EmptyRequest) returns (ArrayReply) {}
+  rpc GetAllNamedActions (SimpleGetRequest) returns (ArrayReply) {}
+  rpc GetAllRoles (EmptyRequest) returns (ArrayReply) {}
+  rpc GetAllNamedRoles (SimpleGetRequest) returns (ArrayReply) {}
+  rpc GetPolicy (EmptyRequest) returns (Array2DReply) {}
+  rpc GetFilteredPolicy (GetPolicyRequest) returns (Array2DReply) {}
+  rpc GetNamedPolicy (GetPolicyRequest) returns (Array2DReply) {}
+  rpc GetFilteredNamedPolicy (GetPolicyRequest) returns (Array2DReply) {}
+  rpc GetGroupingPolicy (EmptyRequest) returns (Array2DReply) {}
+  rpc GetFilteredGroupingPolicy (GetPolicyRequest) returns (Array2DReply) {}
+  rpc GetFilteredNamedGroupingPolicy (GetPolicyRequest) returns (Array2DReply) {}
+  rpc HasPolicy (ExistRequest) returns (BoolReply) {}
+  rpc HasNamedPolicy (ExistRequest) returns (BoolReply) {}
+  rpc HasGroupingPolicy (ExistRequest) returns (BoolReply) {}
+  rpc HasNamedGroupingPolicy (ExistRequest) returns (BoolReply) {}
 }
 
 message NewEnforcerRequest {
