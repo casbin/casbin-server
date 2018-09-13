@@ -31,12 +31,27 @@ service Casbin {
   rpc SavePolicy (EmptyRequest) returns (EmptyReply) {}
 
   rpc AddPolicy (PolicyRequest) returns (BoolReply) {}
+  rpc AddNamedPolicy (PolicyRequest) returns (BoolReply) {}
   rpc RemovePolicy (PolicyRequest) returns (BoolReply) {}
+  rpc RemoveNamedPolicy (PolicyRequest) returns (BoolReply) {}
+  rpc RemoveFilteredPolicy (FilteredPolicyRequest) returns (BoolReply) {}
+  rpc RemoveFilteredNamedPolicy (FilteredPolicyRequest) returns (BoolReply) {}
+  rpc GetPolicy (EmptyRequest) returns (Array2DReply) {}
+  rpc GetNamedPolicy (PolicyRequest) returns (Array2DReply) {}
+  rpc GetFilteredPolicy (FilteredPolicyRequest) returns (Array2DReply) {}
+  rpc GetFilteredNamedPolicy (FilteredPolicyRequest) returns (Array2DReply) {}
 
-  rpc AddNamedPolicy (NamedPolicyRequest) returns (BoolReply) {}
-  rpc RemoveNamedPolicy (NamedPolicyRequest) returns (BoolReply) {}
+  rpc AddGroupingPolicy (PolicyRequest) returns (BoolReply) {}
+  rpc AddNamedGroupingPolicy (PolicyRequest) returns (BoolReply) {}
+  rpc RemoveGroupingPolicy (PolicyRequest) returns (BoolReply) {}
+  rpc RemoveNamedGroupingPolicy (PolicyRequest) returns (BoolReply) {}
+  rpc RemoveFilteredGroupingPolicy (FilteredPolicyRequest) returns (BoolReply) {}
+  rpc RemoveFilteredNamedGroupingPolicy (FilteredPolicyRequest) returns (BoolReply) {}
+  rpc GetGroupingPolicy (EmptyRequest) returns (Array2DReply) {}
+  rpc GetNamedGroupingPolicy(PolicyRequest) returns (Array2DReply) {}
+  rpc GetFilteredGroupingPolicy (FilteredPolicyRequest) returns (Array2DReply) {}
+  rpc GetFilteredNamedGroupingPolicy (FilteredPolicyRequest) returns (Array2DReply) {}
 
-  // management api group
   rpc GetAllSubjects (EmptyRequest) returns (ArrayReply) {}
   rpc GetAllNamedSubjects (SimpleGetRequest) returns (ArrayReply) {}
   rpc GetAllObjects (EmptyRequest) returns (ArrayReply) {}
@@ -45,17 +60,11 @@ service Casbin {
   rpc GetAllNamedActions (SimpleGetRequest) returns (ArrayReply) {}
   rpc GetAllRoles (EmptyRequest) returns (ArrayReply) {}
   rpc GetAllNamedRoles (SimpleGetRequest) returns (ArrayReply) {}
-  rpc GetPolicy (EmptyRequest) returns (Array2DReply) {}
-  rpc GetFilteredPolicy (GetPolicyRequest) returns (Array2DReply) {}
-  rpc GetNamedPolicy (GetPolicyRequest) returns (Array2DReply) {}
-  rpc GetFilteredNamedPolicy (GetPolicyRequest) returns (Array2DReply) {}
-  rpc GetGroupingPolicy (EmptyRequest) returns (Array2DReply) {}
-  rpc GetFilteredGroupingPolicy (GetPolicyRequest) returns (Array2DReply) {}
-  rpc GetFilteredNamedGroupingPolicy (GetPolicyRequest) returns (Array2DReply) {}
-  rpc HasPolicy (ExistRequest) returns (BoolReply) {}
-  rpc HasNamedPolicy (ExistRequest) returns (BoolReply) {}
-  rpc HasGroupingPolicy (ExistRequest) returns (BoolReply) {}
-  rpc HasNamedGroupingPolicy (ExistRequest) returns (BoolReply) {}
+
+  rpc HasPolicy (PolicyRequest) returns (BoolReply) {}
+  rpc HasNamedPolicy (PolicyRequest) returns (BoolReply) {}
+  rpc HasGroupingPolicy (PolicyRequest) returns (BoolReply) {}
+  rpc HasNamedGroupingPolicy (PolicyRequest) returns (BoolReply) {}
 }
 
 message NewEnforcerRequest {
@@ -97,17 +106,8 @@ message EmptyReply {
 
 message PolicyRequest {
   int32 enforcerHandler = 1;
-  string sub = 2;
-  string obj = 3;
-  string act = 4;
-}
-
-message NamedPolicyRequest {
-  int32 enforcerHandler = 1;
-  string ptype = 2;
-  string sub = 3;
-  string obj = 4;
-  string act = 5;
+  string pType = 2;
+  repeated string params = 3;
 }
 
 message SimpleGetRequest {
@@ -119,7 +119,7 @@ message ArrayReply {
   repeated string array = 1;
 }
 
-message GetPolicyRequest {
+message FilteredPolicyRequest {
   int32 enforcerHandler = 1;
   string pType = 2;
   int32 fieldIndex = 3;
@@ -132,10 +132,4 @@ message Array2DReply {
   }
 
   repeated d d2 = 1;
-}
-
-message ExistRequest {
-  int32 enforcerHandler = 1;
-  string ptype = 2;
-  repeated string policy = 3;
 }
