@@ -91,7 +91,7 @@ func testGetPolicy(t *testing.T, e *testEngine, res [][]string) {
 
 func testGetFilteredPolicy(t *testing.T, e *testEngine, fieldIndex int, res [][]string, fieldValues ...string) {
 	t.Helper()
-	req := &pb.GetPolicyRequest{
+	req := &pb.FilteredPolicyRequest{
 		EnforcerHandler: e.h, FieldIndex: int32(fieldIndex), FieldValues: fieldValues}
 	reply, err := e.s.GetFilteredPolicy(e.ctx, req)
 	assert.NoError(t, err)
@@ -120,7 +120,7 @@ func testGetGroupingPolicy(t *testing.T, e *testEngine, res [][]string) {
 
 func testGetFilteredGroupingPolicy(t *testing.T, e *testEngine, fieldIndex int, res [][]string, fieldValues ...string) {
 	t.Helper()
-	req := &pb.GetPolicyRequest{
+	req := &pb.FilteredPolicyRequest{
 		EnforcerHandler: e.h, FieldIndex: int32(fieldIndex), FieldValues: fieldValues}
 	reply, err := e.s.GetFilteredGroupingPolicy(e.ctx, req)
 	assert.NoError(t, err)
@@ -135,7 +135,7 @@ func testGetFilteredGroupingPolicy(t *testing.T, e *testEngine, fieldIndex int, 
 
 func testHasPolicy(t *testing.T, e *testEngine, policy []string, res bool) {
 	t.Helper()
-	req := &pb.ExistRequest{EnforcerHandler: e.h, Ptype: "p", Policy: policy}
+	req := &pb.PolicyRequest{EnforcerHandler: e.h, PType: "p", Params: policy}
 	reply, err := e.s.HasPolicy(e.ctx, req)
 	assert.NoError(t, err)
 
@@ -149,7 +149,7 @@ func testHasPolicy(t *testing.T, e *testEngine, policy []string, res bool) {
 
 func testHasGroupingPolicy(t *testing.T, e *testEngine, policy []string, res bool) {
 	t.Helper()
-	req := &pb.ExistRequest{EnforcerHandler: e.h, Ptype: "g", Policy: policy}
+	req := &pb.PolicyRequest{EnforcerHandler: e.h, PType: "g", Params: policy}
 	reply, err := e.s.HasNamedGroupingPolicy(e.ctx, req)
 	assert.NoError(t, err)
 
@@ -199,4 +199,42 @@ func TestGetPolicyAPI(t *testing.T) {
 
 	testHasGroupingPolicy(t, e, []string{"alice", "data2_admin"}, true)
 	testHasGroupingPolicy(t, e, []string{"bob", "data2_admin"}, false)
+}
+
+func TestModifyPolicyAPI(t *testing.T) {
+	e := newTestEngine(t, "file", "../examples/rbac_policy.csv")
+
+	testGetPolicy(t, e, [][]string{
+		{"alice", "data1", "read"},
+		{"bob", "data2", "write"},
+		{"data2_admin", "data2", "read"},
+		{"data2_admin", "data2", "write"}})
+
+	_, err := e.s.RemovePolicy(e.ctx, &pb.PolicyRequest{Params: []string{"alice", "data1", "read"}})
+	assert.NoError(t, err)
+	_, err = e.s.RemovePolicy(e.ctx, &pb.PolicyRequest{Params: []string{"bob", "data2", "write"}})
+	assert.NoError(t, err)
+	_, err = e.s.RemovePolicy(e.ctx, &pb.PolicyRequest{Params: []string{"alice", "data1", "read"}})
+	assert.NoError(t, err)
+
+	_, err = e.s.AddPolicy(e.ctx, &pb.PolicyRequest{Params: []string{"eve", "data3", "read"}})
+	assert.NoError(t, err)
+	_, err = e.s.AddPolicy(e.ctx, &pb.PolicyRequest{Params: []string{"eve", "data3", "read"}})
+	assert.NoError(t, err)
+
+	namedPolicy := []string{"eve", "data3", "read"}
+	_, err = e.s.RemovePolicy(e.ctx, &pb.PolicyRequest{PType: "p", Params: namedPolicy})
+	assert.NoError(t, err)
+	_, err = e.s.AddNamedPolicy(e.ctx, &pb.PolicyRequest{PType: "p", Params: namedPolicy})
+	assert.NoError(t, err)
+
+	testGetPolicy(t, e, [][]string{
+		{"data2_admin", "data2", "read"},
+		{"data2_admin", "data2", "write"},
+		{"eve", "data3", "read"}})
+
+	_, err = e.s.RemoveFilteredPolicy(e.ctx, &pb.FilteredPolicyRequest{FieldIndex: 1, FieldValues: []string{"data2"}})
+	assert.NoError(t, err)
+
+	testGetPolicy(t, e, [][]string{{"eve", "data3", "read"}})
 }
