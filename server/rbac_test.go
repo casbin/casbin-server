@@ -1,0 +1,200 @@
+// Copyright 2018 The casbin Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package server
+
+import (
+	pb "github.com/casbin/casbin-server/proto"
+	"github.com/casbin/casbin/util"
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
+
+func testGetRoles(t *testing.T, e *testEngine, name string, res []string) {
+	t.Helper()
+	reply, err := e.s.GetRolesForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: name})
+	assert.NoError(t, err)
+
+	t.Log("Roles for ", name, ": ", reply.Array)
+
+	if !util.SetEquals(res, reply.Array) {
+		t.Error("Roles for ", name, ": ", reply.Array, ", supposed to be ", res)
+	}
+}
+
+func testGetUsers(t *testing.T, e *testEngine, name string, res []string) {
+	t.Helper()
+	reply, err := e.s.GetUsersForRole(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: name})
+	assert.NoError(t, err)
+
+	t.Log("Users for ", name, ": ", reply.Array)
+
+	if !util.SetEquals(res, reply.Array) {
+		t.Error("Users for ", name, ": ", reply.Array, ", supposed to be ", res)
+	}
+}
+
+func testHasRole(t *testing.T, e *testEngine, name string, role string, res bool) {
+	t.Helper()
+	reply, err := e.s.HasRoleForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: name, Role: role})
+	assert.NoError(t, err)
+
+	t.Log(name, " has role ", role, ": ", reply.Res)
+
+	if res != reply.Res {
+		t.Error(name, " has role ", role, ": ", reply.Res, ", supposed to be ", res)
+	}
+}
+
+func TestRoleAPI(t *testing.T) {
+	e := newTestEngine(t, "file", "../examples/rbac_policy.csv", "../examples/rbac_model.conf")
+
+	testGetRoles(t, e, "alice", []string{"data2_admin"})
+	testGetRoles(t, e, "bob", []string{})
+	testGetRoles(t, e, "data2_admin", []string{})
+	testGetRoles(t, e, "non_exist", []string{})
+
+	testHasRole(t, e, "alice", "data1_admin", false)
+	testHasRole(t, e, "alice", "data2_admin", true)
+
+	_, err := e.s.AddRoleForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: "alice", Role: "data1_admin"})
+	assert.NoError(t, err)
+
+	testGetRoles(t, e, "alice", []string{"data1_admin", "data2_admin"})
+	testGetRoles(t, e, "bob", []string{})
+	testGetRoles(t, e, "data2_admin", []string{})
+
+	_, err = e.s.DeleteRoleForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: "alice", Role: "data1_admin"})
+	assert.NoError(t, err)
+
+	testGetRoles(t, e, "alice", []string{"data2_admin"})
+	testGetRoles(t, e, "bob", []string{})
+	testGetRoles(t, e, "data2_admin", []string{})
+
+	_, err = e.s.DeleteRolesForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: "alice"})
+	assert.NoError(t, err)
+
+	testGetRoles(t, e, "alice", []string{})
+	testGetRoles(t, e, "bob", []string{})
+	testGetRoles(t, e, "data2_admin", []string{})
+
+	_, err = e.s.AddRoleForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: "alice", Role: "data1_admin"})
+	assert.NoError(t, err)
+
+	_, err = e.s.DeleteUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: "alice"})
+	assert.NoError(t, err)
+
+	testGetRoles(t, e, "alice", []string{})
+	testGetRoles(t, e, "bob", []string{})
+	testGetRoles(t, e, "data2_admin", []string{})
+
+	_, err = e.s.AddRoleForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: "alice", Role: "data2_admin"})
+	assert.NoError(t, err)
+
+	testEnforce(t, e, "alice", "data1", "read", true)
+	testEnforce(t, e, "alice", "data1", "write", false)
+	testEnforce(t, e, "alice", "data2", "read", true)
+	testEnforce(t, e, "alice", "data2", "write", true)
+	testEnforce(t, e, "bob", "data1", "read", false)
+	testEnforce(t, e, "bob", "data1", "write", false)
+	testEnforce(t, e, "bob", "data2", "read", false)
+	testEnforce(t, e, "bob", "data2", "write", true)
+
+	_, err = e.s.DeleteRole(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, Role: "data2_admin"})
+	assert.NoError(t, err)
+
+	testEnforce(t, e, "alice", "data1", "read", true)
+	testEnforce(t, e, "alice", "data1", "write", false)
+	testEnforce(t, e, "alice", "data2", "read", false)
+	testEnforce(t, e, "alice", "data2", "write", false)
+	testEnforce(t, e, "bob", "data1", "read", false)
+	testEnforce(t, e, "bob", "data1", "write", false)
+	testEnforce(t, e, "bob", "data2", "read", false)
+	testEnforce(t, e, "bob", "data2", "write", true)
+}
+
+func testGetPermissions(t *testing.T, e *testEngine, name string, res [][]string) {
+	t.Helper()
+	reply, err := e.s.GetPermissionsForUser(e.ctx, &pb.PermissionRequest{EnforcerHandler: e.h, User: name})
+	assert.NoError(t, err)
+
+	myRes := extractFromArray2DReply(reply)
+	t.Log("Permissions for ", name, ": ", myRes)
+
+	if !util.Array2DEquals(res, myRes) {
+		t.Error("Permissions for ", name, ": ", myRes, ", supposed to be ", res)
+	}
+}
+
+func testHasPermission(t *testing.T, e *testEngine, name string, permission []string, res bool) {
+	t.Helper()
+	reply, err := e.s.HasPermissionForUser(e.ctx, &pb.PermissionRequest{EnforcerHandler: e.h, User: name, Permissions: permission})
+	assert.NoError(t, err)
+
+	t.Log(name, " has permission ", util.ArrayToString(permission), ": ", reply.Res)
+
+	if res != reply.Res {
+		t.Error(name, " has permission ", util.ArrayToString(permission), ": ", reply.Res, ", supposed to be ", res)
+	}
+}
+
+func TestPermissionAPI(t *testing.T) {
+	e := newTestEngine(t, "file", "../examples/basic_without_resources_policy.csv",
+		"../examples/basic_without_resources_model.conf")
+
+	testEnforceWithoutUsers(t, e, "alice", "read", true)
+	testEnforceWithoutUsers(t, e, "alice", "write", false)
+	testEnforceWithoutUsers(t, e, "bob", "read", false)
+	testEnforceWithoutUsers(t, e, "bob", "write", true)
+
+	testGetPermissions(t, e, "alice", [][]string{{"alice", "read"}})
+	testGetPermissions(t, e, "bob", [][]string{{"bob", "write"}})
+
+	testHasPermission(t, e, "alice", []string{"read"}, true)
+	testHasPermission(t, e, "alice", []string{"write"}, false)
+	testHasPermission(t, e, "bob", []string{"read"}, false)
+	testHasPermission(t, e, "bob", []string{"write"}, true)
+
+	_, err := e.s.DeletePermission(e.ctx, &pb.PermissionRequest{EnforcerHandler: e.h, Permissions: []string{"read"}})
+	assert.NoError(t, err)
+
+	testEnforceWithoutUsers(t, e, "alice", "read", false)
+	testEnforceWithoutUsers(t, e, "alice", "write", false)
+	testEnforceWithoutUsers(t, e, "bob", "read", false)
+	testEnforceWithoutUsers(t, e, "bob", "write", true)
+
+	_, err = e.s.AddPermissionForUser(e.ctx, &pb.PermissionRequest{EnforcerHandler: e.h, User: "bob", Permissions: []string{"read"}})
+	assert.NoError(t, err)
+
+	testEnforceWithoutUsers(t, e, "alice", "read", false)
+	testEnforceWithoutUsers(t, e, "alice", "write", false)
+	testEnforceWithoutUsers(t, e, "bob", "read", true)
+	testEnforceWithoutUsers(t, e, "bob", "write", true)
+
+	_, err = e.s.DeletePermissionForUser(e.ctx, &pb.PermissionRequest{EnforcerHandler: e.h, User: "bob", Permissions: []string{"read"}})
+	assert.NoError(t, err)
+
+	testEnforceWithoutUsers(t, e, "alice", "read", false)
+	testEnforceWithoutUsers(t, e, "alice", "write", false)
+	testEnforceWithoutUsers(t, e, "bob", "read", false)
+	testEnforceWithoutUsers(t, e, "bob", "write", true)
+
+	_, err = e.s.DeletePermissionsForUser(e.ctx, &pb.PermissionRequest{EnforcerHandler: e.h, User: "bob"})
+	assert.NoError(t, err)
+
+	testEnforceWithoutUsers(t, e, "alice", "read", false)
+	testEnforceWithoutUsers(t, e, "alice", "write", false)
+	testEnforceWithoutUsers(t, e, "bob", "read", false)
+	testEnforceWithoutUsers(t, e, "bob", "write", false)
+}

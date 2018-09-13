@@ -88,9 +88,7 @@ message NewAdapterReply {
 
 message EnforceRequest {
   int32 enforcerHandler = 1;
-  string sub = 2;
-  string obj = 3;
-  string act = 4;
+  repeated string params = 2;
 }
 
 message BoolReply {
@@ -124,6 +122,18 @@ message FilteredPolicyRequest {
   string pType = 2;
   int32 fieldIndex = 3;
   repeated string fieldValues = 4;
+}
+
+message UserRoleRequest {
+  int32 enforcerHandler = 1;
+  string user = 2;
+  string role = 3;
+}
+
+message PermissionRequest {
+  int32 enforcerHandler = 1;
+  string user = 2;
+  repeated string permissions = 3;
 }
 
 message Array2DReply {

@@ -47,7 +47,7 @@ func TestRBACModel(t *testing.T) {
 	act := "read"
 	res := true
 
-	resp2, err := s.Enforce(ctx, &pb.EnforceRequest{EnforcerHandler: e, Sub: sub, Obj: obj, Act: act})
+	resp2, err := s.Enforce(ctx, &pb.EnforceRequest{EnforcerHandler: e, Params: []string{sub, obj, act}})
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,7 +64,7 @@ type testEngine struct {
 	h   int32
 }
 
-func newTestEngine(t *testing.T, from, connectStr string) *testEngine {
+func newTestEngine(t *testing.T, from, connectStr string, modelLoc string) *testEngine {
 	s := NewServer()
 	ctx := context.Background()
 
@@ -73,7 +73,7 @@ func newTestEngine(t *testing.T, from, connectStr string) *testEngine {
 		t.Fatal(err)
 	}
 
-	modelText, err := ioutil.ReadFile("../examples/rbac_model.conf")
+	modelText, err := ioutil.ReadFile(modelLoc)
 	if err != nil {
 		t.Fatal(err)
 	}

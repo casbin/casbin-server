@@ -16,6 +16,7 @@ package server
 
 import (
 	"errors"
+
 	"github.com/casbin/casbin"
 	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/persist"
@@ -94,7 +95,12 @@ func (s *Server) Enforce(ctx context.Context, in *pb.EnforceRequest) (*pb.BoolRe
 		return &pb.BoolReply{Res: false}, err
 	}
 
-	res := e.Enforce(in.Sub, in.Obj, in.Act)
+	params := make([]interface{}, 0, len(in.Params))
+	for e := range in.Params {
+		params = append(params, in.Params[e])
+	}
+
+	res := e.Enforce(params...)
 
 	return &pb.BoolReply{Res: res}, nil
 }
