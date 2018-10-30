@@ -19,22 +19,34 @@ import (
 	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/persist"
 	"github.com/casbin/casbin/persist/file-adapter"
+	"github.com/casbin/gorm-adapter"
+	_ "github.com/jinzhu/gorm/dialects/mssql"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 var errDriverName = errors.New("invalid DriverName")
 
-const (
-	MYSQL = "mysql"
-	FILE  = "file"
-)
-
 func newAdapter(in *pb.NewAdapterRequest) (persist.Adapter, error) {
 	var a persist.Adapter
+	supportDriverNames := [...]string{"file", "mysql", "postgres", "sqlite3", "mssql"}
 
 	switch in.DriverName {
-	case FILE:
+	case "file":
 		a = fileadapter.NewAdapter(in.ConnectString)
 	default:
+		var support = false
+		for _, driverName := range supportDriverNames {
+			if driverName == in.DriverName {
+				support = true
+				break
+			}
+		}
+		if support {
+			a = gormadapter.NewAdapter(in.DriverName, in.ConnectString)
+			break
+		}
 		return nil, errDriverName
 	}
 
