@@ -22,42 +22,6 @@ import (
 	pb "github.com/casbin/casbin-server/proto"
 )
 
-func TestRBACModel(t *testing.T) {
-	s := NewServer()
-	ctx := context.Background()
-
-	_, err := s.NewAdapter(ctx, &pb.NewAdapterRequest{DriverName: "file", ConnectString: "../examples/rbac_policy.csv"})
-	if err != nil {
-		t.Error(err)
-	}
-
-	modelText, err := ioutil.ReadFile("../examples/rbac_model.conf")
-	if err != nil {
-		t.Error(err)
-	}
-
-	resp, err := s.NewEnforcer(ctx, &pb.NewEnforcerRequest{ModelText: string(modelText), AdapterHandle: 0})
-	if err != nil {
-		t.Error(err)
-	}
-	e := resp.Handler
-
-	sub := "alice"
-	obj := "data1"
-	act := "read"
-	res := true
-
-	resp2, err := s.Enforce(ctx, &pb.EnforceRequest{EnforcerHandler: e, Params: []string{sub, obj, act}})
-	if err != nil {
-		t.Error(err)
-	}
-	myRes := resp2.Res
-
-	if myRes != res {
-		t.Errorf("%s, %s, %s: %t, supposed to be %t", sub, obj, act, myRes, res)
-	}
-}
-
 type testEngine struct {
 	s   *Server
 	ctx context.Context
