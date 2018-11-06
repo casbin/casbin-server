@@ -39,6 +39,12 @@ Alternatively, you can also [run it from an IDE](https://github.com/casbin/casbi
 
     go get github.com/casbin/casbin-server
 
+## Database Support
+
+Similar to Casbin, Casbin-Server also uses adapters to provide policy storage. However, because Casbin-Server is a service instead of a library, the adapters have to be implemented inside Casbin-Server. As Golang is a static language, each adapter requires to import 3rd-party library for that database. We cannot import all those 3rd-party libraries inside Casbin-Server's code, as it causes dependency overhead.
+
+For now, only [Gorm Adapter](https://github.com/casbin/casbin-server/blob/master/server/adapter.go) is built-in with ``mssql``, ``mysql``, ``postgres`` imports all commented. If you want to use ``Gorm Adapter`` with one of those databases, you should uncomment that import line, or add your own import, or even use another adapter by modifying Casbin-Server's source code.
+
 ## Getting Help
 
 - [Casbin](https://github.com/casbin/casbin)
