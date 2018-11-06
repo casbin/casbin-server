@@ -15,8 +15,8 @@
 package server
 
 import (
+	"context"
 	pb "github.com/casbin/casbin-server/proto"
-	"golang.org/x/net/context"
 )
 
 // GetAllSubjects gets the list of subjects that show up in the current policy.

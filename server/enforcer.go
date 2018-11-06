@@ -18,10 +18,10 @@ import (
 	"errors"
 	"strings"
 
+	"context"
 	"github.com/casbin/casbin"
 	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/persist"
-	"golang.org/x/net/context"
 )
 
 // Server is used to implement proto.CasbinServer.

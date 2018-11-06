@@ -15,8 +15,8 @@
 package server
 
 import (
+	"context"
 	pb "github.com/casbin/casbin-server/proto"
-	"golang.org/x/net/context"
 )
 
 // GetRolesForUser gets the roles that a user has.

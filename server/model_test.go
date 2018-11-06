@@ -18,9 +18,9 @@ import (
 	"io/ioutil"
 	"testing"
 
+	"context"
 	pb "github.com/casbin/casbin-server/proto"
 	"github.com/stretchr/testify/assert"
-	"golang.org/x/net/context"
 )
 
 func testEnforce(t *testing.T, e *testEngine, sub string, obj string, act string, res bool) {
