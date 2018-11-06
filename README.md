@@ -13,6 +13,16 @@ Casbin-Server is just a container of Casbin enforcers and adapters. Casbin-Serve
 
 Of course, you can setup Casbin-Server together with your policy database in the same machine. But they can be separated. If you want to achieve high availability, you can use a Redis cluster as policy storage, then link Casbin-Server's adapter with it. In this sense, Casbin enforcer can be viewed as stateless component. It just retrieves the policy rules it is interested in (via sharding), does some computation and then returns ``allow`` or ``deny``.
 
+## Architecture
+
+Casbin-Server uses the client-server architecture. Casbin-Server itself is the server (in Golang only for now). The clients for Casbin-Server are listed here:
+
+Language | Client
+----|----
+Golang | https://github.com/casbin/casbin-go-client
+
+Contributions for clients in other languages are welcome :)
+
 ## Prerequisites
 
 ### Protobuf (if not installed):
