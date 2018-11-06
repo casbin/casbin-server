@@ -16,6 +16,7 @@ package server
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/casbin/casbin"
 	pb "github.com/casbin/casbin-server/proto"
@@ -67,12 +68,22 @@ func (s *Server) addAdapter(a persist.Adapter) int {
 }
 
 func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*pb.NewEnforcerReply, error) {
-	a, err := s.getAdapter(int(in.AdapterHandle))
-	if err != nil {
-		return &pb.NewEnforcerReply{Handler: 0}, err
+	var a persist.Adapter
+	var e *casbin.Enforcer
+
+	if in.AdapterHandle != -1 {
+		var err error
+		a, err = s.getAdapter(int(in.AdapterHandle))
+		if err != nil {
+			return &pb.NewEnforcerReply{Handler: 0}, err
+		}
 	}
 
-	e := casbin.NewEnforcer(casbin.NewModel(in.ModelText), a)
+	if a == nil {
+		e = casbin.NewEnforcer(casbin.NewModel(in.ModelText))
+	} else {
+		e = casbin.NewEnforcer(casbin.NewModel(in.ModelText), a)
+	}
 	h := s.addEnforcer(e)
 
 	return &pb.NewEnforcerReply{Handler: int32(h)}, nil
@@ -96,8 +107,24 @@ func (s *Server) Enforce(ctx context.Context, in *pb.EnforceRequest) (*pb.BoolRe
 	}
 
 	params := make([]interface{}, 0, len(in.Params))
-	for e := range in.Params {
-		params = append(params, in.Params[e])
+	for index := range in.Params {
+		param := in.Params[index]
+		if strings.HasPrefix(param, "ABAC::") == true {
+			model, err := resolveABAC(param)
+			if err != nil {
+				return &pb.BoolReply{Res: false}, err
+			}
+			m := e.GetModel()["m"]["m"]
+			for k, v := range model.source {
+				old := "." + k
+				if strings.Contains(m.Value, old) {
+					m.Value = strings.Replace(m.Value, old, "."+v, -1)
+				}
+			}
+			params = append(params, model)
+			continue
+		}
+		params = append(params, in.Params[index])
 	}
 
 	res := e.Enforce(params...)

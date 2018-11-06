@@ -16,6 +16,7 @@ package server
 
 import (
 	"errors"
+
 	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/persist"
 	"github.com/casbin/casbin/persist/file-adapter"
@@ -23,7 +24,6 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mssql"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 var errDriverName = errors.New("invalid DriverName")
