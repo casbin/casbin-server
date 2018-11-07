@@ -16,7 +16,6 @@ package server
 
 import (
 	"errors"
-	"strings"
 
 	"context"
 	"github.com/casbin/casbin"
@@ -107,24 +106,10 @@ func (s *Server) Enforce(ctx context.Context, in *pb.EnforceRequest) (*pb.BoolRe
 	}
 
 	params := make([]interface{}, 0, len(in.Params))
+	m := e.GetModel()["m"]["m"]
 	for index := range in.Params {
-		param := in.Params[index]
-		if strings.HasPrefix(param, "ABAC::") == true {
-			model, err := resolveABAC(param)
-			if err != nil {
-				return &pb.BoolReply{Res: false}, err
-			}
-			m := e.GetModel()["m"]["m"]
-			for k, v := range model.source {
-				old := "." + k
-				if strings.Contains(m.Value, old) {
-					m.Value = strings.Replace(m.Value, old, "."+v, -1)
-				}
-			}
-			params = append(params, model)
-			continue
-		}
-		params = append(params, in.Params[index])
+		param := parseAbacParam(in.Params[index], m)
+		params = append(params, param)
 	}
 
 	res := e.Enforce(params...)
