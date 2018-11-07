@@ -19,6 +19,20 @@ import (
 	pb "github.com/casbin/casbin-server/proto"
 )
 
+func (s *Server) wrapPlainPolicy(policy [][]string) *pb.Array2DReply {
+	if len(policy) == 0 {
+		return &pb.Array2DReply{}
+	}
+
+	policyReply := &pb.Array2DReply{}
+	policyReply.D2 = make([]*pb.Array2DReplyD, len(policy))
+	for e := range policy {
+		policyReply.D2[e] = &pb.Array2DReplyD{D1: policy[e]}
+	}
+
+	return policyReply
+}
+
 // GetAllSubjects gets the list of subjects that show up in the current policy.
 func (s *Server) GetAllSubjects(ctx context.Context, in *pb.EmptyRequest) (*pb.ArrayReply, error) {
 	return s.GetAllNamedSubjects(ctx, &pb.SimpleGetRequest{EnforcerHandler: in.Handler, PType: "p"})
@@ -175,16 +189,120 @@ func (s *Server) HasNamedGroupingPolicy(ctx context.Context, in *pb.PolicyReques
 	return &pb.BoolReply{Res: e.GetModel().HasPolicy("g", in.PType, in.Params)}, nil
 }
 
-func (s *Server) wrapPlainPolicy(policy [][]string) *pb.Array2DReply {
-	if len(policy) == 0 {
-		return &pb.Array2DReply{}
+func (s *Server) AddPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
+	in.PType = "p"
+
+	return s.AddNamedPolicy(ctx, in)
+}
+
+func (s *Server) AddNamedPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.BoolReply{}, err
 	}
 
-	policyReply := &pb.Array2DReply{}
-	policyReply.D2 = make([]*pb.Array2DReplyD, len(policy))
-	for e := range policy {
-		policyReply.D2[e] = &pb.Array2DReplyD{D1: policy[e]}
+	return &pb.BoolReply{Res: e.AddNamedPolicy(in.PType, in.Params)}, err
+}
+
+func (s *Server) RemovePolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.BoolReply{}, err
 	}
 
-	return policyReply
+	res := e.RemovePolicy(in.Params)
+
+	return &pb.BoolReply{Res: res}, err
+}
+
+func (s *Server) RemoveNamedPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
+
+	res := e.RemoveNamedPolicy(in.PType, in.Params)
+
+	return &pb.BoolReply{Res: res}, err
+}
+
+// RemoveFilteredPolicy removes an authorization rule from the current policy, field filters can be specified.
+func (s *Server) RemoveFilteredPolicy(ctx context.Context, in *pb.FilteredPolicyRequest) (*pb.BoolReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
+
+	return &pb.BoolReply{Res: e.RemoveFilteredNamedPolicy("p", int(in.FieldIndex), in.FieldValues...)}, nil
+}
+
+// RemoveFilteredNamedPolicy removes an authorization rule from the current named policy, field filters can be specified.
+func (s *Server) RemoveFilteredNamedPolicy(ctx context.Context, in *pb.FilteredPolicyRequest) (*pb.BoolReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
+
+	return &pb.BoolReply{Res: e.RemoveFilteredNamedPolicy(in.PType, int(in.FieldIndex), in.FieldValues...)}, nil
+}
+
+// AddGroupingPolicy adds a role inheritance rule to the current policy.
+// If the rule already exists, the function returns false and the rule will not be added.
+// Otherwise the function returns true by adding the new rule.
+func (s *Server) AddGroupingPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
+	in.PType = "g"
+
+	return s.AddNamedGroupingPolicy(ctx, in)
+}
+
+// AddNamedGroupingPolicy adds a named role inheritance rule to the current policy.
+// If the rule already exists, the function returns false and the rule will not be added.
+// Otherwise the function returns true by adding the new rule.
+func (s *Server) AddNamedGroupingPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
+
+	return &pb.BoolReply{Res: e.AddNamedGroupingPolicy(in.PType, in.Params)}, nil
+}
+
+// RemoveGroupingPolicy removes a role inheritance rule from the current policy.
+func (s *Server) RemoveGroupingPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
+
+	return &pb.BoolReply{Res: e.RemoveNamedGroupingPolicy("g", in.Params)}, nil
+}
+
+// RemoveNamedGroupingPolicy removes a role inheritance rule from the current named policy.
+func (s *Server) RemoveNamedGroupingPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
+
+	return &pb.BoolReply{Res: e.RemoveNamedGroupingPolicy(in.PType, in.Params)}, nil
+}
+
+// RemoveFilteredGroupingPolicy removes a role inheritance rule from the current policy, field filters can be specified.
+func (s *Server) RemoveFilteredGroupingPolicy(ctx context.Context, in *pb.FilteredPolicyRequest) (*pb.BoolReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
+
+	return &pb.BoolReply{Res: e.RemoveFilteredNamedGroupingPolicy("g", int(in.FieldIndex), in.FieldValues...)}, nil
+}
+
+// RemoveFilteredNamedGroupingPolicy removes a role inheritance rule from the current named policy, field filters can be specified.
+func (s *Server) RemoveFilteredNamedGroupingPolicy(ctx context.Context, in *pb.FilteredPolicyRequest) (*pb.BoolReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
+
+	return &pb.BoolReply{Res: e.RemoveFilteredNamedGroupingPolicy(in.PType, int(in.FieldIndex), in.FieldValues...)}, nil
 }
