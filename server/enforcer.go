@@ -106,13 +106,18 @@ func (s *Server) Enforce(ctx context.Context, in *pb.EnforceRequest) (*pb.BoolRe
 	}
 
 	params := make([]interface{}, 0, len(in.Params))
+
 	m := e.GetModel()["m"]["m"]
+	sourceValue := m.Value
+
 	for index := range in.Params {
 		param := parseAbacParam(in.Params[index], m)
 		params = append(params, param)
 	}
 
 	res := e.Enforce(params...)
+
+	m.Value = sourceValue
 
 	return &pb.BoolReply{Res: res}, nil
 }
