@@ -27,7 +27,7 @@ Contributions for clients in other languages are welcome :)
 
 ### Protobuf (if not installed):
 
-As Casbin-Server uses ``gRPC``, you need to install ProtoBuf's command-line tool: ``protoc`` first to generate the ``.proto`` file. The command is:
+As Casbin-Server uses ``gRPC``, you need to [install Protocol Buffers](https://github.com/golang/protobuf#installation) first to generate the ``.proto`` file. The command is:
 
 ```
 protoc -I proto --go_out=plugins=grpc:proto proto/casbin.proto
