@@ -24,19 +24,19 @@ import (
 	"github.com/casbin/casbin/model"
 )
 
-type ABACModel struct {
-	V0     string
-	V1     string
-	V2     string
-	V3     string
-	V4     string
-	V5     string
-	V6     string
-	V7     string
-	V8     string
-	V9     string
-	V10    string
-	source map[string]string
+type AbacAttrList struct {
+	V0      string
+	V1      string
+	V2      string
+	V3      string
+	V4      string
+	V5      string
+	V6      string
+	V7      string
+	V8      string
+	V9      string
+	V10     string
+	nameMap map[string]string
 }
 
 func toUpperFirstChar(str string) string {
@@ -54,64 +54,64 @@ func MakeABAC(obj interface{}) (string, error) {
 	return "ABAC::" + string(data), nil
 }
 
-func resolveABAC(obj string) (ABACModel, error) {
+func resolveABAC(obj string) (AbacAttrList, error) {
 	var jsonMap map[string]interface{}
-	model := ABACModel{source: map[string]string{}}
+	attrList := AbacAttrList{nameMap: map[string]string{}}
 
 	err := json.Unmarshal([]byte(obj[len("ABAC::"):]), &jsonMap)
 	if err != nil {
-		return model, err
+		return attrList, err
 	}
 
 	i := 0
 	for k, v := range jsonMap {
 		key := toUpperFirstChar(k)
 		value := fmt.Sprintf("%v", v)
-		model.source[key] = "V" + strconv.Itoa(i)
+		attrList.nameMap[key] = "V" + strconv.Itoa(i)
 		switch i {
 		case 0:
-			model.V0 = value
+			attrList.V0 = value
 		case 1:
-			model.V1 = value
+			attrList.V1 = value
 		case 2:
-			model.V2 = value
+			attrList.V2 = value
 		case 3:
-			model.V3 = value
+			attrList.V3 = value
 		case 4:
-			model.V4 = value
+			attrList.V4 = value
 		case 5:
-			model.V5 = value
+			attrList.V5 = value
 		case 6:
-			model.V6 = value
+			attrList.V6 = value
 		case 7:
-			model.V7 = value
+			attrList.V7 = value
 		case 8:
-			model.V8 = value
+			attrList.V8 = value
 		case 9:
-			model.V9 = value
+			attrList.V9 = value
 		case 10:
-			model.V10 = value
+			attrList.V10 = value
 		}
 		i++
 	}
 
-	return model, nil
+	return attrList, nil
 }
 
 func parseAbacParam(param string, m *model.Assertion) interface{} {
-	if strings.HasPrefix(param, "ABAC::") == true {
-		model, err := resolveABAC(param)
+	if strings.HasPrefix(param, "ABAC::") {
+		attrList, err := resolveABAC(param)
 		if err != nil {
 			panic(err)
 		}
-		for k, v := range model.source {
+		for k, v := range attrList.nameMap {
 			old := "." + k
 			if strings.Contains(m.Value, old) {
-				m.Value = strings.Replace(m.Value, old, "."+v, -1)
+				m.Value = strings.Replace(m.Value, old, "." + v, -1)
 			}
 		}
 
-		return model
+		return attrList
 	} else {
 		return param
 	}
