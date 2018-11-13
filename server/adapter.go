@@ -26,11 +26,11 @@ import (
 	//_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-var errDriverName = errors.New("invalid DriverName")
+var errDriverName = errors.New("currently supported DriverName: file | mysql | postgres | mssql")
 
 func newAdapter(in *pb.NewAdapterRequest) (persist.Adapter, error) {
 	var a persist.Adapter
-	supportDriverNames := [...]string{"file", "mysql", "postgres", "sqlite3", "mssql"}
+	supportDriverNames := [...]string{"file", "mysql", "postgres", "mssql"}
 
 	switch in.DriverName {
 	case "file":
@@ -44,7 +44,7 @@ func newAdapter(in *pb.NewAdapterRequest) (persist.Adapter, error) {
 			}
 		}
 		if support {
-			a = gormadapter.NewAdapter(in.DriverName, in.ConnectString)
+			a = gormadapter.NewAdapter(in.DriverName, in.ConnectString, in.DbSpecified)
 			break
 		}
 		return nil, errDriverName
