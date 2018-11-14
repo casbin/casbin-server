@@ -20,6 +20,7 @@ Casbin-Server uses the client-server architecture. Casbin-Server itself is the s
 Language | Client
 ----|----
 Golang | https://github.com/casbin/casbin-go-client
+PHP | https://github.com/php-casbin/casbin-client
 
 Contributions for clients in other languages are welcome :)
 
