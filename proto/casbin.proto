@@ -80,6 +80,7 @@ message NewAdapterRequest {
   string adapterName = 1;
   string driverName = 2;
   string connectString = 3;
+  bool dbSpecified =4;
 }
 
 message NewAdapterReply {
