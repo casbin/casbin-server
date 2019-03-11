@@ -25,18 +25,6 @@ PHP | https://github.com/php-casbin/casbin-client
 
 Contributions for clients in other languages are welcome :)
 
-## Prerequisites
-
-### Protobuf (if not installed):
-
-As Casbin-Server uses ``gRPC``, you need to [install Protocol Buffers](https://github.com/golang/protobuf#installation) first to generate the ``.proto`` file. The command is:
-
-```
-protoc -I proto --go_out=plugins=grpc:proto proto/casbin.proto
-```
-
-Alternatively, you can also [run it from an IDE](https://github.com/casbin/casbin-server/blob/6b46c48c8845dc1b8021f2872be08b8e1a62b092/main.go#L15).
-
 ## Installation
 
     go get github.com/casbin/casbin-server
