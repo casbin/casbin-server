@@ -4,8 +4,10 @@
 package proto
 
 import (
+	context "context"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	grpc "google.golang.org/grpc"
 	math "math"
 )
 
@@ -836,4 +838,1264 @@ var fileDescriptor_df0f85ba9164bca5 = []byte{
 	0xff, 0x1c, 0x0d, 0xcb, 0xed, 0xdc, 0x08, 0xcf, 0xec, 0xd0, 0xad, 0x11, 0xd6, 0xc9, 0x8f, 0xbc,
 	0xfa, 0xe5, 0xe8, 0xea, 0x36, 0x0a, 0x17, 0x23, 0xe5, 0x6a, 0x57, 0x5a, 0xbf, 0xfa, 0x37, 0x00,
 	0x00, 0xff, 0xff, 0x19, 0xe7, 0x0a, 0xa4, 0x8d, 0x0e, 0x00, 0x00,
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConn
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion4
+
+// CasbinClient is the client API for Casbin service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type CasbinClient interface {
+	NewEnforcer(ctx context.Context, in *NewEnforcerRequest, opts ...grpc.CallOption) (*NewEnforcerReply, error)
+	NewAdapter(ctx context.Context, in *NewAdapterRequest, opts ...grpc.CallOption) (*NewAdapterReply, error)
+	Enforce(ctx context.Context, in *EnforceRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	LoadPolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyReply, error)
+	SavePolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyReply, error)
+	AddPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	AddNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	RemovePolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	RemoveNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	RemoveFilteredPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	RemoveFilteredNamedPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	GetPolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
+	GetNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
+	GetFilteredPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
+	GetFilteredNamedPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
+	AddGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	AddNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	RemoveGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	RemoveNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	RemoveFilteredGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	RemoveFilteredNamedGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	GetGroupingPolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
+	GetNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
+	GetFilteredGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
+	GetFilteredNamedGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
+	GetAllSubjects(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error)
+	GetAllNamedSubjects(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error)
+	GetAllObjects(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error)
+	GetAllNamedObjects(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error)
+	GetAllActions(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error)
+	GetAllNamedActions(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error)
+	GetAllRoles(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error)
+	GetAllNamedRoles(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error)
+	HasPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	HasNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	HasGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+	HasNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
+}
+
+type casbinClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewCasbinClient(cc *grpc.ClientConn) CasbinClient {
+	return &casbinClient{cc}
+}
+
+func (c *casbinClient) NewEnforcer(ctx context.Context, in *NewEnforcerRequest, opts ...grpc.CallOption) (*NewEnforcerReply, error) {
+	out := new(NewEnforcerReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/NewEnforcer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) NewAdapter(ctx context.Context, in *NewAdapterRequest, opts ...grpc.CallOption) (*NewAdapterReply, error) {
+	out := new(NewAdapterReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/NewAdapter", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) Enforce(ctx context.Context, in *EnforceRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/Enforce", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) LoadPolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyReply, error) {
+	out := new(EmptyReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/LoadPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) SavePolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyReply, error) {
+	out := new(EmptyReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/SavePolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) AddPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/AddPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) AddNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/AddNamedPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) RemovePolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/RemovePolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) RemoveNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/RemoveNamedPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) RemoveFilteredPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/RemoveFilteredPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) RemoveFilteredNamedPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/RemoveFilteredNamedPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetPolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
+	out := new(Array2DReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
+	out := new(Array2DReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetNamedPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetFilteredPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
+	out := new(Array2DReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetFilteredPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetFilteredNamedPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
+	out := new(Array2DReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetFilteredNamedPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) AddGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/AddGroupingPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) AddNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/AddNamedGroupingPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) RemoveGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/RemoveGroupingPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) RemoveNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/RemoveNamedGroupingPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) RemoveFilteredGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/RemoveFilteredGroupingPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) RemoveFilteredNamedGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/RemoveFilteredNamedGroupingPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetGroupingPolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
+	out := new(Array2DReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetGroupingPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
+	out := new(Array2DReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetNamedGroupingPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetFilteredGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
+	out := new(Array2DReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetFilteredGroupingPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetFilteredNamedGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
+	out := new(Array2DReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetFilteredNamedGroupingPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetAllSubjects(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
+	out := new(ArrayReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetAllSubjects", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetAllNamedSubjects(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
+	out := new(ArrayReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetAllNamedSubjects", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetAllObjects(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
+	out := new(ArrayReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetAllObjects", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetAllNamedObjects(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
+	out := new(ArrayReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetAllNamedObjects", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetAllActions(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
+	out := new(ArrayReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetAllActions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetAllNamedActions(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
+	out := new(ArrayReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetAllNamedActions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetAllRoles(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
+	out := new(ArrayReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetAllRoles", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) GetAllNamedRoles(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
+	out := new(ArrayReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/GetAllNamedRoles", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) HasPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/HasPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) HasNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/HasNamedPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) HasGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/HasGroupingPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *casbinClient) HasNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
+	out := new(BoolReply)
+	err := c.cc.Invoke(ctx, "/proto.Casbin/HasNamedGroupingPolicy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// CasbinServer is the server API for Casbin service.
+type CasbinServer interface {
+	NewEnforcer(context.Context, *NewEnforcerRequest) (*NewEnforcerReply, error)
+	NewAdapter(context.Context, *NewAdapterRequest) (*NewAdapterReply, error)
+	Enforce(context.Context, *EnforceRequest) (*BoolReply, error)
+	LoadPolicy(context.Context, *EmptyRequest) (*EmptyReply, error)
+	SavePolicy(context.Context, *EmptyRequest) (*EmptyReply, error)
+	AddPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
+	AddNamedPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
+	RemovePolicy(context.Context, *PolicyRequest) (*BoolReply, error)
+	RemoveNamedPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
+	RemoveFilteredPolicy(context.Context, *FilteredPolicyRequest) (*BoolReply, error)
+	RemoveFilteredNamedPolicy(context.Context, *FilteredPolicyRequest) (*BoolReply, error)
+	GetPolicy(context.Context, *EmptyRequest) (*Array2DReply, error)
+	GetNamedPolicy(context.Context, *PolicyRequest) (*Array2DReply, error)
+	GetFilteredPolicy(context.Context, *FilteredPolicyRequest) (*Array2DReply, error)
+	GetFilteredNamedPolicy(context.Context, *FilteredPolicyRequest) (*Array2DReply, error)
+	AddGroupingPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
+	AddNamedGroupingPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
+	RemoveGroupingPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
+	RemoveNamedGroupingPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
+	RemoveFilteredGroupingPolicy(context.Context, *FilteredPolicyRequest) (*BoolReply, error)
+	RemoveFilteredNamedGroupingPolicy(context.Context, *FilteredPolicyRequest) (*BoolReply, error)
+	GetGroupingPolicy(context.Context, *EmptyRequest) (*Array2DReply, error)
+	GetNamedGroupingPolicy(context.Context, *PolicyRequest) (*Array2DReply, error)
+	GetFilteredGroupingPolicy(context.Context, *FilteredPolicyRequest) (*Array2DReply, error)
+	GetFilteredNamedGroupingPolicy(context.Context, *FilteredPolicyRequest) (*Array2DReply, error)
+	GetAllSubjects(context.Context, *EmptyRequest) (*ArrayReply, error)
+	GetAllNamedSubjects(context.Context, *SimpleGetRequest) (*ArrayReply, error)
+	GetAllObjects(context.Context, *EmptyRequest) (*ArrayReply, error)
+	GetAllNamedObjects(context.Context, *SimpleGetRequest) (*ArrayReply, error)
+	GetAllActions(context.Context, *EmptyRequest) (*ArrayReply, error)
+	GetAllNamedActions(context.Context, *SimpleGetRequest) (*ArrayReply, error)
+	GetAllRoles(context.Context, *EmptyRequest) (*ArrayReply, error)
+	GetAllNamedRoles(context.Context, *SimpleGetRequest) (*ArrayReply, error)
+	HasPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
+	HasNamedPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
+	HasGroupingPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
+	HasNamedGroupingPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
+}
+
+func RegisterCasbinServer(s *grpc.Server, srv CasbinServer) {
+	s.RegisterService(&_Casbin_serviceDesc, srv)
+}
+
+func _Casbin_NewEnforcer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewEnforcerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).NewEnforcer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/NewEnforcer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).NewEnforcer(ctx, req.(*NewEnforcerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_NewAdapter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewAdapterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).NewAdapter(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/NewAdapter",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).NewAdapter(ctx, req.(*NewAdapterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_Enforce_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EnforceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).Enforce(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/Enforce",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).Enforce(ctx, req.(*EnforceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_LoadPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).LoadPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/LoadPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).LoadPolicy(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_SavePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).SavePolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/SavePolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).SavePolicy(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_AddPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).AddPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/AddPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).AddPolicy(ctx, req.(*PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_AddNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).AddNamedPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/AddNamedPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).AddNamedPolicy(ctx, req.(*PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_RemovePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).RemovePolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/RemovePolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).RemovePolicy(ctx, req.(*PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_RemoveNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).RemoveNamedPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/RemoveNamedPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).RemoveNamedPolicy(ctx, req.(*PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_RemoveFilteredPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).RemoveFilteredPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/RemoveFilteredPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).RemoveFilteredPolicy(ctx, req.(*FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_RemoveFilteredNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).RemoveFilteredNamedPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/RemoveFilteredNamedPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).RemoveFilteredNamedPolicy(ctx, req.(*FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetPolicy(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetNamedPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetNamedPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetNamedPolicy(ctx, req.(*PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetFilteredPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetFilteredPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetFilteredPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetFilteredPolicy(ctx, req.(*FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetFilteredNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetFilteredNamedPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetFilteredNamedPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetFilteredNamedPolicy(ctx, req.(*FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_AddGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).AddGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/AddGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).AddGroupingPolicy(ctx, req.(*PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_AddNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).AddNamedGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/AddNamedGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).AddNamedGroupingPolicy(ctx, req.(*PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_RemoveGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).RemoveGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/RemoveGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).RemoveGroupingPolicy(ctx, req.(*PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_RemoveNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).RemoveNamedGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/RemoveNamedGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).RemoveNamedGroupingPolicy(ctx, req.(*PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_RemoveFilteredGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).RemoveFilteredGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/RemoveFilteredGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).RemoveFilteredGroupingPolicy(ctx, req.(*FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_RemoveFilteredNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).RemoveFilteredNamedGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/RemoveFilteredNamedGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).RemoveFilteredNamedGroupingPolicy(ctx, req.(*FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetGroupingPolicy(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetNamedGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetNamedGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetNamedGroupingPolicy(ctx, req.(*PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetFilteredGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetFilteredGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetFilteredGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetFilteredGroupingPolicy(ctx, req.(*FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetFilteredNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetFilteredNamedGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetFilteredNamedGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetFilteredNamedGroupingPolicy(ctx, req.(*FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetAllSubjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetAllSubjects(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetAllSubjects",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetAllSubjects(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetAllNamedSubjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SimpleGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetAllNamedSubjects(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetAllNamedSubjects",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetAllNamedSubjects(ctx, req.(*SimpleGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetAllObjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetAllObjects(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetAllObjects",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetAllObjects(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetAllNamedObjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SimpleGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetAllNamedObjects(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetAllNamedObjects",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetAllNamedObjects(ctx, req.(*SimpleGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetAllActions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetAllActions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetAllActions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetAllActions(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetAllNamedActions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SimpleGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetAllNamedActions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetAllNamedActions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetAllNamedActions(ctx, req.(*SimpleGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetAllRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetAllRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetAllRoles",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetAllRoles(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_GetAllNamedRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SimpleGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).GetAllNamedRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/GetAllNamedRoles",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).GetAllNamedRoles(ctx, req.(*SimpleGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_HasPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).HasPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/HasPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).HasPolicy(ctx, req.(*PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_HasNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).HasNamedPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/HasNamedPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).HasNamedPolicy(ctx, req.(*PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_HasGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).HasGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/HasGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).HasGroupingPolicy(ctx, req.(*PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Casbin_HasNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CasbinServer).HasNamedGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Casbin/HasNamedGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CasbinServer).HasNamedGroupingPolicy(ctx, req.(*PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _Casbin_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.Casbin",
+	HandlerType: (*CasbinServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "NewEnforcer",
+			Handler:    _Casbin_NewEnforcer_Handler,
+		},
+		{
+			MethodName: "NewAdapter",
+			Handler:    _Casbin_NewAdapter_Handler,
+		},
+		{
+			MethodName: "Enforce",
+			Handler:    _Casbin_Enforce_Handler,
+		},
+		{
+			MethodName: "LoadPolicy",
+			Handler:    _Casbin_LoadPolicy_Handler,
+		},
+		{
+			MethodName: "SavePolicy",
+			Handler:    _Casbin_SavePolicy_Handler,
+		},
+		{
+			MethodName: "AddPolicy",
+			Handler:    _Casbin_AddPolicy_Handler,
+		},
+		{
+			MethodName: "AddNamedPolicy",
+			Handler:    _Casbin_AddNamedPolicy_Handler,
+		},
+		{
+			MethodName: "RemovePolicy",
+			Handler:    _Casbin_RemovePolicy_Handler,
+		},
+		{
+			MethodName: "RemoveNamedPolicy",
+			Handler:    _Casbin_RemoveNamedPolicy_Handler,
+		},
+		{
+			MethodName: "RemoveFilteredPolicy",
+			Handler:    _Casbin_RemoveFilteredPolicy_Handler,
+		},
+		{
+			MethodName: "RemoveFilteredNamedPolicy",
+			Handler:    _Casbin_RemoveFilteredNamedPolicy_Handler,
+		},
+		{
+			MethodName: "GetPolicy",
+			Handler:    _Casbin_GetPolicy_Handler,
+		},
+		{
+			MethodName: "GetNamedPolicy",
+			Handler:    _Casbin_GetNamedPolicy_Handler,
+		},
+		{
+			MethodName: "GetFilteredPolicy",
+			Handler:    _Casbin_GetFilteredPolicy_Handler,
+		},
+		{
+			MethodName: "GetFilteredNamedPolicy",
+			Handler:    _Casbin_GetFilteredNamedPolicy_Handler,
+		},
+		{
+			MethodName: "AddGroupingPolicy",
+			Handler:    _Casbin_AddGroupingPolicy_Handler,
+		},
+		{
+			MethodName: "AddNamedGroupingPolicy",
+			Handler:    _Casbin_AddNamedGroupingPolicy_Handler,
+		},
+		{
+			MethodName: "RemoveGroupingPolicy",
+			Handler:    _Casbin_RemoveGroupingPolicy_Handler,
+		},
+		{
+			MethodName: "RemoveNamedGroupingPolicy",
+			Handler:    _Casbin_RemoveNamedGroupingPolicy_Handler,
+		},
+		{
+			MethodName: "RemoveFilteredGroupingPolicy",
+			Handler:    _Casbin_RemoveFilteredGroupingPolicy_Handler,
+		},
+		{
+			MethodName: "RemoveFilteredNamedGroupingPolicy",
+			Handler:    _Casbin_RemoveFilteredNamedGroupingPolicy_Handler,
+		},
+		{
+			MethodName: "GetGroupingPolicy",
+			Handler:    _Casbin_GetGroupingPolicy_Handler,
+		},
+		{
+			MethodName: "GetNamedGroupingPolicy",
+			Handler:    _Casbin_GetNamedGroupingPolicy_Handler,
+		},
+		{
+			MethodName: "GetFilteredGroupingPolicy",
+			Handler:    _Casbin_GetFilteredGroupingPolicy_Handler,
+		},
+		{
+			MethodName: "GetFilteredNamedGroupingPolicy",
+			Handler:    _Casbin_GetFilteredNamedGroupingPolicy_Handler,
+		},
+		{
+			MethodName: "GetAllSubjects",
+			Handler:    _Casbin_GetAllSubjects_Handler,
+		},
+		{
+			MethodName: "GetAllNamedSubjects",
+			Handler:    _Casbin_GetAllNamedSubjects_Handler,
+		},
+		{
+			MethodName: "GetAllObjects",
+			Handler:    _Casbin_GetAllObjects_Handler,
+		},
+		{
+			MethodName: "GetAllNamedObjects",
+			Handler:    _Casbin_GetAllNamedObjects_Handler,
+		},
+		{
+			MethodName: "GetAllActions",
+			Handler:    _Casbin_GetAllActions_Handler,
+		},
+		{
+			MethodName: "GetAllNamedActions",
+			Handler:    _Casbin_GetAllNamedActions_Handler,
+		},
+		{
+			MethodName: "GetAllRoles",
+			Handler:    _Casbin_GetAllRoles_Handler,
+		},
+		{
+			MethodName: "GetAllNamedRoles",
+			Handler:    _Casbin_GetAllNamedRoles_Handler,
+		},
+		{
+			MethodName: "HasPolicy",
+			Handler:    _Casbin_HasPolicy_Handler,
+		},
+		{
+			MethodName: "HasNamedPolicy",
+			Handler:    _Casbin_HasNamedPolicy_Handler,
+		},
+		{
+			MethodName: "HasGroupingPolicy",
+			Handler:    _Casbin_HasGroupingPolicy_Handler,
+		},
+		{
+			MethodName: "HasNamedGroupingPolicy",
+			Handler:    _Casbin_HasNamedGroupingPolicy_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "casbin.proto",
 }
