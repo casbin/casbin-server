@@ -49,11 +49,13 @@ For now, only [Gorm Adapter](https://github.com/casbin/casbin-server/blob/master
 
 ## Limitation of ABAC
 
-Casbin-Server also supports the ABAC model as the Casbin library does. You may wonder how Casbin-Server passes the Go structs to the server-side via network? Good question. In fact, Casbin-Server's client dumps Go struct into JSON and transmits the JSON string prefixed by ``ABAC::`` to Casbin-Server. Casbin-Server will recognize the prefix and load the JSON string into a pre-defined Go struct with 11 string members, then pass it to Casbin. So there will be two limitations for Casbin-Server's ABAC compared to Casbin's ABAC:
+Casbin-Server also supports the ABAC model as the Casbin library does. You may wonder how Casbin-Server passes the Go structs to the server-side via network? Good question. In fact, Casbin-Server's client dumps Go struct into JSON and transmits the JSON string prefixed by ``ABAC::`` to Casbin-Server. Casbin-Server will recognize the prefix and load the JSON string into a pre-defined Go struct with 11 string members, then pass it to Casbin. So there will be several limitations for Casbin-Server's ABAC compared to Casbin's ABAC:
 
 1. The Go struct should be flat, all members should be primitive types, e.g., string, int, boolean. No nested struct, no slice or map.
 
-2. The Go struct is limited to 11 members at most. If you want to have more members, you should modify [Casbin-Server's source code](https://github.com/casbin/casbin-server/blob/5e21d10e863c7d8461f951417eb1c63fa00204fb/server/abac.go#L27-L40) by adding more members and rebuild it.
+2. All members should be public (first letter capitalized).
+
+3. The Go struct is limited to 11 members at most. If you want to have more members, you should modify [Casbin-Server's source code](https://github.com/casbin/casbin-server/blob/5e21d10e863c7d8461f951417eb1c63fa00204fb/server/abac.go#L27-L40) by adding more members and rebuild it.
 
 ## Getting Help
 
