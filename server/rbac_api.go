@@ -50,7 +50,10 @@ func (s *Server) HasRoleForUser(ctx context.Context, in *pb.UserRoleRequest) (*p
 		return &pb.BoolReply{}, err
 	}
 
-	roles := e.GetRolesForUser(in.User)
+	roles, err := e.GetRolesForUser(in.User)
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
 
 	for _, r := range roles {
 		if r == in.Role {
