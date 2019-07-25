@@ -79,9 +79,25 @@ func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*p
 	}
 
 	if a == nil {
-		e = casbin.NewEnforcer(casbin.NewModel(in.ModelText))
+		m, err := casbin.NewModel(in.ModelText)
+		if err != nil {
+			return &pb.NewEnforcerReply{Handler: 0}, err
+		}
+
+		e, err = casbin.NewEnforcer(m)
+		if err != nil {
+			return &pb.NewEnforcerReply{Handler: 0}, err
+		}
 	} else {
-		e = casbin.NewEnforcer(casbin.NewModel(in.ModelText), a)
+		m, err := casbin.NewModel(in.ModelText)
+		if err != nil {
+			return &pb.NewEnforcerReply{Handler: 0}, err
+		}
+
+		e, err = casbin.NewEnforcer(m, a)
+		if err != nil {
+			return &pb.NewEnforcerReply{Handler: 0}, err
+		}
 	}
 	h := s.addEnforcer(e)
 
@@ -115,7 +131,10 @@ func (s *Server) Enforce(ctx context.Context, in *pb.EnforceRequest) (*pb.BoolRe
 		params = append(params, param)
 	}
 
-	res := e.Enforce(params...)
+	res, err := e.Enforce(params...)
+	if err != nil {
+		return &pb.BoolReply{Res: false}, err
+	}
 
 	m.Value = sourceValue
 

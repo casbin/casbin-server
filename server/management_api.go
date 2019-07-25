@@ -175,7 +175,6 @@ func (s *Server) HasNamedPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.
 // HasGroupingPolicy determines whether a role inheritance rule exists.
 func (s *Server) HasGroupingPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
 	in.PType = "g"
-
 	return s.HasNamedGroupingPolicy(ctx, in)
 }
 
@@ -191,7 +190,6 @@ func (s *Server) HasNamedGroupingPolicy(ctx context.Context, in *pb.PolicyReques
 
 func (s *Server) AddPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
 	in.PType = "p"
-
 	return s.AddNamedPolicy(ctx, in)
 }
 
@@ -201,18 +199,13 @@ func (s *Server) AddNamedPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.
 		return &pb.BoolReply{}, err
 	}
 
-	return &pb.BoolReply{Res: e.AddNamedPolicy(in.PType, in.Params)}, err
+	ruleAdded, err := e.AddNamedPolicy(in.PType, in.Params)
+	return &pb.BoolReply{Res: ruleAdded}, err
 }
 
 func (s *Server) RemovePolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
-	if err != nil {
-		return &pb.BoolReply{}, err
-	}
-
-	res := e.RemovePolicy(in.Params)
-
-	return &pb.BoolReply{Res: res}, err
+	in.PType = "p"
+	return s.RemoveNamedPolicy(ctx, in)
 }
 
 func (s *Server) RemoveNamedPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
@@ -221,19 +214,14 @@ func (s *Server) RemoveNamedPolicy(ctx context.Context, in *pb.PolicyRequest) (*
 		return &pb.BoolReply{}, err
 	}
 
-	res := e.RemoveNamedPolicy(in.PType, in.Params)
-
-	return &pb.BoolReply{Res: res}, err
+	ruleRemoved, err := e.RemoveNamedPolicy(in.PType, in.Params)
+	return &pb.BoolReply{Res: ruleRemoved}, err
 }
 
 // RemoveFilteredPolicy removes an authorization rule from the current policy, field filters can be specified.
 func (s *Server) RemoveFilteredPolicy(ctx context.Context, in *pb.FilteredPolicyRequest) (*pb.BoolReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
-	if err != nil {
-		return &pb.BoolReply{}, err
-	}
-
-	return &pb.BoolReply{Res: e.RemoveFilteredNamedPolicy("p", int(in.FieldIndex), in.FieldValues...)}, nil
+	in.PType = "p"
+	return s.RemoveFilteredNamedPolicy(ctx, in)
 }
 
 // RemoveFilteredNamedPolicy removes an authorization rule from the current named policy, field filters can be specified.
@@ -243,7 +231,8 @@ func (s *Server) RemoveFilteredNamedPolicy(ctx context.Context, in *pb.FilteredP
 		return &pb.BoolReply{}, err
 	}
 
-	return &pb.BoolReply{Res: e.RemoveFilteredNamedPolicy(in.PType, int(in.FieldIndex), in.FieldValues...)}, nil
+	ruleRemoved, err := e.RemoveFilteredNamedPolicy(in.PType, int(in.FieldIndex), in.FieldValues...)
+	return &pb.BoolReply{Res: ruleRemoved}, err
 }
 
 // AddGroupingPolicy adds a role inheritance rule to the current policy.
@@ -251,7 +240,6 @@ func (s *Server) RemoveFilteredNamedPolicy(ctx context.Context, in *pb.FilteredP
 // Otherwise the function returns true by adding the new rule.
 func (s *Server) AddGroupingPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
 	in.PType = "g"
-
 	return s.AddNamedGroupingPolicy(ctx, in)
 }
 
@@ -264,17 +252,14 @@ func (s *Server) AddNamedGroupingPolicy(ctx context.Context, in *pb.PolicyReques
 		return &pb.BoolReply{}, err
 	}
 
-	return &pb.BoolReply{Res: e.AddNamedGroupingPolicy(in.PType, in.Params)}, nil
+	ruleAdded, err := e.AddNamedGroupingPolicy(in.PType, in.Params)
+	return &pb.BoolReply{Res: ruleAdded}, err
 }
 
 // RemoveGroupingPolicy removes a role inheritance rule from the current policy.
 func (s *Server) RemoveGroupingPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
-	if err != nil {
-		return &pb.BoolReply{}, err
-	}
-
-	return &pb.BoolReply{Res: e.RemoveNamedGroupingPolicy("g", in.Params)}, nil
+	in.PType = "g"
+	return s.RemoveNamedGroupingPolicy(ctx, in)
 }
 
 // RemoveNamedGroupingPolicy removes a role inheritance rule from the current named policy.
@@ -284,17 +269,14 @@ func (s *Server) RemoveNamedGroupingPolicy(ctx context.Context, in *pb.PolicyReq
 		return &pb.BoolReply{}, err
 	}
 
-	return &pb.BoolReply{Res: e.RemoveNamedGroupingPolicy(in.PType, in.Params)}, nil
+	ruleRemoved, err := e.RemoveNamedGroupingPolicy(in.PType, in.Params)
+	return &pb.BoolReply{Res: ruleRemoved}, err
 }
 
 // RemoveFilteredGroupingPolicy removes a role inheritance rule from the current policy, field filters can be specified.
 func (s *Server) RemoveFilteredGroupingPolicy(ctx context.Context, in *pb.FilteredPolicyRequest) (*pb.BoolReply, error) {
-	e, err := s.getEnforcer(int(in.EnforcerHandler))
-	if err != nil {
-		return &pb.BoolReply{}, err
-	}
-
-	return &pb.BoolReply{Res: e.RemoveFilteredNamedGroupingPolicy("g", int(in.FieldIndex), in.FieldValues...)}, nil
+	in.PType = "g"
+	return s.RemoveFilteredNamedGroupingPolicy(ctx, in)
 }
 
 // RemoveFilteredNamedGroupingPolicy removes a role inheritance rule from the current named policy, field filters can be specified.
@@ -304,5 +286,6 @@ func (s *Server) RemoveFilteredNamedGroupingPolicy(ctx context.Context, in *pb.F
 		return &pb.BoolReply{}, err
 	}
 
-	return &pb.BoolReply{Res: e.RemoveFilteredNamedGroupingPolicy(in.PType, int(in.FieldIndex), in.FieldValues...)}, nil
+	ruleRemoved, err := e.RemoveFilteredNamedGroupingPolicy(in.PType, int(in.FieldIndex), in.FieldValues...)
+	return &pb.BoolReply{Res: ruleRemoved}, err
 }

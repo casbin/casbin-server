@@ -72,7 +72,8 @@ func (s *Server) AddRoleForUser(ctx context.Context, in *pb.UserRoleRequest) (*p
 		return &pb.BoolReply{}, err
 	}
 
-	return &pb.BoolReply{Res: e.AddGroupingPolicy(in.User, in.Role)}, nil
+	ruleAdded, err := e.AddGroupingPolicy(in.User, in.Role)
+	return &pb.BoolReply{Res: ruleAdded}, err
 }
 
 // DeleteRoleForUser deletes a role for a user.
@@ -83,7 +84,8 @@ func (s *Server) DeleteRoleForUser(ctx context.Context, in *pb.UserRoleRequest) 
 		return &pb.BoolReply{}, err
 	}
 
-	return &pb.BoolReply{Res: e.RemoveGroupingPolicy(in.User, in.Role)}, nil
+	ruleRemoved, err := e.RemoveGroupingPolicy(in.User, in.Role)
+	return &pb.BoolReply{Res: ruleRemoved}, err
 }
 
 // DeleteRolesForUser deletes all roles for a user.
@@ -94,7 +96,8 @@ func (s *Server) DeleteRolesForUser(ctx context.Context, in *pb.UserRoleRequest)
 		return &pb.BoolReply{}, err
 	}
 
-	return &pb.BoolReply{Res: e.RemoveFilteredGroupingPolicy(0, in.User)}, nil
+	ruleRemoved, err := e.RemoveFilteredGroupingPolicy(0, in.User)
+	return &pb.BoolReply{Res: ruleRemoved}, err
 }
 
 // DeleteUser deletes a user.
@@ -105,7 +108,8 @@ func (s *Server) DeleteUser(ctx context.Context, in *pb.UserRoleRequest) (*pb.Bo
 		return &pb.BoolReply{}, err
 	}
 
-	return &pb.BoolReply{Res: e.RemoveFilteredGroupingPolicy(0, in.User)}, nil
+	ruleRemoved, err := e.RemoveFilteredGroupingPolicy(0, in.User)
+	return &pb.BoolReply{Res: ruleRemoved}, err
 }
 
 // DeleteRole deletes a role.
@@ -115,10 +119,8 @@ func (s *Server) DeleteRole(ctx context.Context, in *pb.UserRoleRequest) (*pb.Em
 		return &pb.EmptyReply{}, err
 	}
 
-	e.RemoveFilteredGroupingPolicy(1, in.Role)
-	e.RemoveFilteredPolicy(0, in.Role)
-
-	return &pb.EmptyReply{}, nil
+	_, err = e.DeleteRole(in.Role)
+	return &pb.EmptyReply{}, err
 }
 
 // DeletePermission deletes a permission.
@@ -129,7 +131,8 @@ func (s *Server) DeletePermission(ctx context.Context, in *pb.PermissionRequest)
 		return &pb.BoolReply{}, err
 	}
 
-	return &pb.BoolReply{Res: e.RemoveFilteredPolicy(1, in.Permissions...)}, nil
+	ruleRemoved, err := e.RemoveFilteredPolicy(1, in.Permissions...)
+	return &pb.BoolReply{Res: ruleRemoved}, err
 }
 
 // AddPermissionForUser adds a permission for a user or role.
@@ -140,7 +143,8 @@ func (s *Server) AddPermissionForUser(ctx context.Context, in *pb.PermissionRequ
 		return &pb.BoolReply{}, err
 	}
 
-	return &pb.BoolReply{Res: e.AddPolicy(s.convertPermissions(in.User, in.Permissions...)...)}, nil
+	ruleAdded, err := e.AddPolicy(s.convertPermissions(in.User, in.Permissions...)...)
+	return &pb.BoolReply{Res: ruleAdded}, err
 }
 
 // DeletePermissionForUser deletes a permission for a user or role.
@@ -151,7 +155,8 @@ func (s *Server) DeletePermissionForUser(ctx context.Context, in *pb.PermissionR
 		return &pb.BoolReply{}, err
 	}
 
-	return &pb.BoolReply{Res: e.RemovePolicy(s.convertPermissions(in.User, in.Permissions...)...)}, nil
+	ruleRemoved, err := e.RemovePolicy(s.convertPermissions(in.User, in.Permissions...)...)
+	return &pb.BoolReply{Res: ruleRemoved}, err
 }
 
 // DeletePermissionsForUser deletes permissions for a user or role.
@@ -162,7 +167,8 @@ func (s *Server) DeletePermissionsForUser(ctx context.Context, in *pb.Permission
 		return &pb.BoolReply{}, err
 	}
 
-	return &pb.BoolReply{Res: e.RemoveFilteredPolicy(0, in.User)}, nil
+	ruleRemoved, err := e.RemoveFilteredPolicy(0, in.User)
+	return &pb.BoolReply{Res: ruleRemoved}, err
 }
 
 // GetPermissionsForUser gets permissions for a user or role.

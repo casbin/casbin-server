@@ -43,11 +43,15 @@ func newAdapter(in *pb.NewAdapterRequest) (persist.Adapter, error) {
 				break
 			}
 		}
-		if support {
-			a = gormadapter.NewAdapter(in.DriverName, in.ConnectString, in.DbSpecified)
-			break
+		if !support {
+			return nil, errDriverName
 		}
-		return nil, errDriverName
+
+		var err error
+		a, err = gormadapter.NewAdapter(in.DriverName, in.ConnectString, in.DbSpecified)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return a, nil
