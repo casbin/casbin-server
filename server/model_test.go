@@ -15,10 +15,10 @@
 package server
 
 import (
+	"context"
 	"io/ioutil"
 	"testing"
 
-	"context"
 	pb "github.com/casbin/casbin-server/proto"
 	"github.com/stretchr/testify/assert"
 )

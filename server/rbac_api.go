@@ -16,6 +16,7 @@ package server
 
 import (
 	"context"
+
 	pb "github.com/casbin/casbin-server/proto"
 )
 

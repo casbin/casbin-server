@@ -15,11 +15,12 @@
 package server
 
 import (
+	"context"
 	"errors"
 
-	"context"
 	"github.com/casbin/casbin"
 	pb "github.com/casbin/casbin-server/proto"
+	"github.com/casbin/casbin/model"
 	"github.com/casbin/casbin/persist"
 )
 
@@ -79,7 +80,7 @@ func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*p
 	}
 
 	if a == nil {
-		m, err := casbin.NewModel(in.ModelText)
+		m, err := model.NewModelFromString(in.ModelText)
 		if err != nil {
 			return &pb.NewEnforcerReply{Handler: 0}, err
 		}
@@ -89,7 +90,7 @@ func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*p
 			return &pb.NewEnforcerReply{Handler: 0}, err
 		}
 	} else {
-		m, err := casbin.NewModel(in.ModelText)
+		m, err := model.NewModelFromString(in.ModelText)
 		if err != nil {
 			return &pb.NewEnforcerReply{Handler: 0}, err
 		}
