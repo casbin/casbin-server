@@ -18,10 +18,11 @@ Of course, you can setup Casbin-Server together with your policy database in the
 
 Casbin-Server uses the client-server architecture. Casbin-Server itself is the server (in Golang only for now). The clients for Casbin-Server are listed here:
 
-Language | Client
-----|----
-Golang | https://github.com/casbin/casbin-go-client
-PHP | https://github.com/php-casbin/casbin-client
+Language | Author | Client
+----|----|----
+Golang | Casbin | https://github.com/casbin/casbin-go-client
+PHP | Casbin | https://github.com/php-casbin/casbin-client
+Golang | [paysuper](https://github.com/paysuper) | https://github.com/paysuper/echo-casbin-middleware
 
 Contributions for clients in other languages are welcome :)
 
