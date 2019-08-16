@@ -15,10 +15,11 @@
 package server
 
 import (
-	pb "github.com/casbin/casbin-server/proto"
-	"github.com/casbin/casbin/util"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	pb "github.com/casbin/casbin-server/proto"
+	"github.com/casbin/casbin/v2/util"
+	"github.com/stretchr/testify/assert"
 )
 
 func testGetRoles(t *testing.T, e *testEngine, name string, res []string) {

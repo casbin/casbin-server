@@ -18,9 +18,9 @@ import (
 	"errors"
 
 	pb "github.com/casbin/casbin-server/proto"
-	"github.com/casbin/casbin/persist"
-	"github.com/casbin/casbin/persist/file-adapter"
-	"github.com/casbin/gorm-adapter"
+	"github.com/casbin/casbin/v2/persist"
+	"github.com/casbin/casbin/v2/persist/file-adapter"
+	"github.com/casbin/gorm-adapter/v2"
 	//_ "github.com/jinzhu/gorm/dialects/mssql"
 	//_ "github.com/jinzhu/gorm/dialects/mysql"
 	//_ "github.com/jinzhu/gorm/dialects/postgres"
