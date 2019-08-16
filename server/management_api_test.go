@@ -18,7 +18,7 @@ import (
 	"testing"
 
 	pb "github.com/casbin/casbin-server/proto"
-	"github.com/casbin/casbin/util"
+	"github.com/casbin/casbin/v2/util"
 	"github.com/stretchr/testify/assert"
 )
 
