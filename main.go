@@ -17,6 +17,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"log"
 	"net"
 
@@ -26,12 +28,16 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-const (
-	port = ":50051"
-)
-
 func main() {
-	lis, err := net.Listen("tcp", port)
+	var port int
+	flag.IntVar(&port, "port", 50051, "listening port")
+	flag.Parse()
+
+	if port < 1 || port > 65535 {
+		panic(fmt.Sprintf("invalid port number: %d", port))
+	}
+
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -39,6 +45,7 @@ func main() {
 	pb.RegisterCasbinServer(s, server.NewServer())
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
+	log.Println("Listening on", port)
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
