@@ -28,6 +28,8 @@ github.com/casbin/casbin v1.9.1/go.mod h1:z8uPsfBJGUsnkagrt3G8QvjgTKFMBJ32UP8HpZ
 github.com/casbin/casbin/v2 v2.0.0/go.mod h1:YcPU1XXisHhLzuxH9coDNf2FbKpjGlbCg3n9yuLkIJQ=
 github.com/casbin/casbin/v2 v2.0.1 h1:yCfJYcr27iIGqag9IYASlW6VBKiWjJiLgQ4yLyIogSw=
 github.com/casbin/casbin/v2 v2.0.1/go.mod h1:YcPU1XXisHhLzuxH9coDNf2FbKpjGlbCg3n9yuLkIJQ=
+github.com/casbin/casbin/v2 v2.0.2 h1:TDRkBDCnsh3yWrdVHnIh8TL0I50u5kW3eRHBrw2ctME=
+github.com/casbin/casbin/v2 v2.0.2/go.mod h1:YcPU1XXisHhLzuxH9coDNf2FbKpjGlbCg3n9yuLkIJQ=
 github.com/casbin/gorm-adapter v1.0.0 h1:s6U2gJQ4reenRde0L85YsrwNt8k0bv6iUAfRigi1/cM=
 github.com/casbin/gorm-adapter v1.0.0/go.mod h1:1E0t3/djAo+vIvDfNPGigJjLMyoh2XNesXMW69R3ykA=
 github.com/casbin/gorm-adapter/v2 v2.0.0 h1:C/hiO5HZf/v3IXGXSpIY45WlD3rOB3y23HiDSvh6rFg=

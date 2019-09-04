@@ -17,6 +17,7 @@ package server
 import (
 	"context"
 	"errors"
+	"strings"
 
 	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/v2"
@@ -116,28 +117,42 @@ func (s *Server) NewAdapter(ctx context.Context, in *pb.NewAdapterRequest) (*pb.
 	return &pb.NewAdapterReply{Handler: int32(h)}, nil
 }
 
+func (s *Server) parseParam(param, matcher string) (interface{}, string) {
+	if strings.HasPrefix(param, "ABAC::") {
+		attrList, err := resolveABAC(param)
+		if err != nil {
+			panic(err)
+		}
+		for k, v := range attrList.nameMap {
+			old := "." + k
+			if strings.Contains(matcher, old) {
+				matcher = strings.Replace(matcher, old, "."+v, -1)
+			}
+		}
+		return attrList, matcher
+	} else {
+		return param, matcher
+	}
+}
+
 func (s *Server) Enforce(ctx context.Context, in *pb.EnforceRequest) (*pb.BoolReply, error) {
 	e, err := s.getEnforcer(int(in.EnforcerHandler))
 	if err != nil {
 		return &pb.BoolReply{Res: false}, err
 	}
-
+	var param interface{}
 	params := make([]interface{}, 0, len(in.Params))
-
-	m := e.GetModel()["m"]["m"]
-	sourceValue := m.Value
+	m := e.GetModel()["m"]["m"].Value
 
 	for index := range in.Params {
-		param := parseAbacParam(in.Params[index], m)
+		param, m = s.parseParam(in.Params[index], m)
 		params = append(params, param)
 	}
 
-	res, err := e.Enforce(params...)
+	res, err := e.EnforceWithMatcher(m, params...)
 	if err != nil {
 		return &pb.BoolReply{Res: false}, err
 	}
-
-	m.Value = sourceValue
 
 	return &pb.BoolReply{Res: res}, nil
 }
