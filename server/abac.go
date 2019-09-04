@@ -18,10 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-	"strings"
 	"unicode"
-
-	"github.com/casbin/casbin/v2/model"
 )
 
 type AbacAttrList struct {
@@ -96,23 +93,4 @@ func resolveABAC(obj string) (AbacAttrList, error) {
 	}
 
 	return attrList, nil
-}
-
-func parseAbacParam(param string, m *model.Assertion) interface{} {
-	if strings.HasPrefix(param, "ABAC::") {
-		attrList, err := resolveABAC(param)
-		if err != nil {
-			panic(err)
-		}
-		for k, v := range attrList.nameMap {
-			old := "." + k
-			if strings.Contains(m.Value, old) {
-				m.Value = strings.Replace(m.Value, old, "."+v, -1)
-			}
-		}
-
-		return attrList
-	} else {
-		return param
-	}
 }
