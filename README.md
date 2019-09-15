@@ -10,7 +10,7 @@ Casbin Server is the ``Access Control as a Service (ACaaS)`` solution based on [
 
 ## What is ``Casbin Server``?
 
-Casbin-Server is just a container of Casbin enforcers and adapters. Casbin-Server is designed to be ``compute-intensive`` (for calculating whether an access should be allowed) instead of a centralized policy storage. Just like how native Casbin library works, each Casbin enforcer in Casbin-Server can use its own adapter, which is linked with external database for policy storage.
+Casbin-Server is just a container of Casbin enforcers and adapters. Casbin-Server performs the policy enforcement check, which may take a fair amount of processing depending on the model and number of policies, interfacing to external data stores such as databases for policy data. Just like how native Casbin library works, each Casbin enforcer in Casbin-Server can use its own adapter, which is linked with external database for policy storage.
 
 Of course, you can setup Casbin-Server together with your policy database in the same machine. But they can be separated. If you want to achieve high availability, you can use a Redis cluster as policy storage, then link Casbin-Server's adapter with it. In this sense, Casbin enforcer can be viewed as stateless component. It just retrieves the policy rules it is interested in (via sharding), does some computation and then returns ``allow`` or ``deny``.
 
