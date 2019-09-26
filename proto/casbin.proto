@@ -67,6 +67,7 @@ service Casbin {
   rpc HasNamedGroupingPolicy (PolicyRequest) returns (BoolReply) {}
 
   rpc GetRolesForUser (UserRoleRequest) returns (ArrayReply) {}
+  rpc GetUsersForRole (UserRoleRequest) returns (ArrayReply) {}
 }
 
 message NewEnforcerRequest {
