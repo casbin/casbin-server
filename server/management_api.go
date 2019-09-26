@@ -17,7 +17,7 @@ package server
 import (
 	"context"
 
-	pb "github.com/casbin/casbin-server/proto"
+	pb "github.com/prathik-kaliyambath/casbin-server/proto"
 )
 
 func (s *Server) wrapPlainPolicy(policy [][]string) *pb.Array2DReply {
