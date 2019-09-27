@@ -67,8 +67,10 @@ service Casbin {
   rpc HasNamedGroupingPolicy (PolicyRequest) returns (BoolReply) {}
 
   rpc GetRolesForUser (UserRoleRequest) returns (ArrayReply) {}
+  rpc GetImplicitRolesForUser (UserRoleRequest) returns (ArrayReply) {}
   rpc GetUsersForRole (UserRoleRequest) returns (ArrayReply) {}
   rpc GetPermissionsForUser (PermissionRequest) returns (Array2DReply) {}
+  rpc GetImplicitPermissionsForUser (PermissionRequest) returns (Array2DReply) {}
 }
 
 message NewEnforcerRequest {
