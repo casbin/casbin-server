@@ -69,6 +69,7 @@ service Casbin {
   rpc GetRolesForUser (UserRoleRequest) returns (ArrayReply) {}
   rpc GetImplicitRolesForUser (UserRoleRequest) returns (ArrayReply) {}
   rpc GetUsersForRole (UserRoleRequest) returns (ArrayReply) {}
+
   rpc GetPermissionsForUser (PermissionRequest) returns (Array2DReply) {}
   rpc GetImplicitPermissionsForUser (PermissionRequest) returns (Array2DReply) {}
 }
