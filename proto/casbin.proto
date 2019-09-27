@@ -68,6 +68,7 @@ service Casbin {
 
   rpc GetRolesForUser (UserRoleRequest) returns (ArrayReply) {}
   rpc GetUsersForRole (UserRoleRequest) returns (ArrayReply) {}
+  rpc GetPermissionsForUser (PermissionRequest) returns (Array2DReply) {}
 }
 
 message NewEnforcerRequest {
