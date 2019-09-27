@@ -17,7 +17,7 @@ package server
 import (
 	"errors"
 
-	pb "github.com/prathik-kaliyambath/casbin-server/proto"
+	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/v2/persist"
 	"github.com/casbin/casbin/v2/persist/file-adapter"
 	"github.com/casbin/gorm-adapter/v2"

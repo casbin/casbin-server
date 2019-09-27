@@ -17,7 +17,7 @@ package server
 import (
 	"testing"
 
-	pb "github.com/prathik-kaliyambath/casbin-server/proto"
+	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/v2/util"
 	"github.com/stretchr/testify/assert"
 )
