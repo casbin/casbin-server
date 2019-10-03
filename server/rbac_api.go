@@ -32,6 +32,16 @@ func (s *Server) GetRolesForUser(ctx context.Context, in *pb.UserRoleRequest) (*
 	return &pb.ArrayReply{Array: res}, nil
 }
 
+// GetImplicitPermissionsForUser gets all permissions(including children) for a user or role.
+func (s *Server) GetImplicitRolesForUser(ctx context.Context, in *pb.UserRoleRequest) (*pb.ArrayReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.ArrayReply{}, err
+	}
+	res, err := e.GetImplicitRolesForUser(in.User)
+	return &pb.ArrayReply{Array: res}, nil
+}
+
 // GetUsersForRole gets the users that has a role.
 func (s *Server) GetUsersForRole(ctx context.Context, in *pb.UserRoleRequest) (*pb.ArrayReply, error) {
 	e, err := s.getEnforcer(int(in.EnforcerHandler))
@@ -180,6 +190,16 @@ func (s *Server) GetPermissionsForUser(ctx context.Context, in *pb.PermissionReq
 	}
 
 	return s.wrapPlainPolicy(e.GetFilteredPolicy(0, in.User)), nil
+}
+
+// GetImplicitPermissionsForUser gets all permissions(including children) for a user or role.
+func (s *Server) GetImplicitPermissionsForUser(ctx context.Context, in *pb.PermissionRequest) (*pb.Array2DReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.Array2DReply{}, err
+	}
+	resp, err := e.GetImplicitPermissionsForUser(in.User)
+	return s.wrapPlainPolicy(resp), nil
 }
 
 // HasPermissionForUser determines whether a user has a permission.
