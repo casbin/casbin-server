@@ -15,7 +15,10 @@
 package server
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
+	"os"
 
 	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/v2/persist"
@@ -30,8 +33,8 @@ var errDriverName = errors.New("currently supported DriverName: file | mysql | p
 
 func newAdapter(in *pb.NewAdapterRequest) (persist.Adapter, error) {
 	var a persist.Adapter
+	in = checkAdapter(in)
 	supportDriverNames := [...]string{"file", "mysql", "postgres", "mssql"}
-
 	switch in.DriverName {
 	case "file":
 		a = fileadapter.NewAdapter(in.ConnectString)
@@ -55,4 +58,32 @@ func newAdapter(in *pb.NewAdapterRequest) (persist.Adapter, error) {
 	}
 
 	return a, nil
+}
+
+func checkAdapter(in *pb.NewAdapterRequest) *pb.NewAdapterRequest {
+	cfg := LoadConfiguration("config/adapter_config.json")
+	if in.ConnectString == "" || in.DriverName == "" {
+		in.DriverName = cfg.Driver
+		in.ConnectString = cfg.Connection
+	}
+	return in
+}
+
+func LoadConfiguration(file string) Config {
+	//Loads a default config from adapter_config in case a custom adapter isn't provided by the client.
+	//DriverName and ConnectionString can be configured in the file. Defaults to 'file' mode.
+
+	configFile, err := os.Open(file)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	decoder := json.NewDecoder(configFile)
+	config := Config{}
+	decoder.Decode(&config)
+	return config
+}
+
+type Config struct {
+	Driver string
+	Connection string
 }
