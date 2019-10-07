@@ -33,8 +33,9 @@ var errDriverName = errors.New("currently supported DriverName: file | mysql | p
 
 func newAdapter(in *pb.NewAdapterRequest) (persist.Adapter, error) {
 	var a persist.Adapter
-	in = checkAdapter(in)
+	in = checkLocalConfig(in)
 	supportDriverNames := [...]string{"file", "mysql", "postgres", "mssql"}
+
 	switch in.DriverName {
 	case "file":
 		a = fileadapter.NewAdapter(in.ConnectString)
@@ -60,7 +61,7 @@ func newAdapter(in *pb.NewAdapterRequest) (persist.Adapter, error) {
 	return a, nil
 }
 
-func checkAdapter(in *pb.NewAdapterRequest) *pb.NewAdapterRequest {
+func checkLocalConfig(in *pb.NewAdapterRequest) *pb.NewAdapterRequest {
 	cfg := LoadConfiguration("config/adapter_config.json")
 	if in.ConnectString == "" || in.DriverName == "" {
 		in.DriverName = cfg.Driver
