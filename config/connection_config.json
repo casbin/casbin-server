@@ -1,0 +1,5 @@
+{
+  "driver": "file",
+  "connection": "examples/rbac_policy.csv",
+  "enforcer": "examples/rbac_model.conf"
+}

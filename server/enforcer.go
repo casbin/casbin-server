@@ -17,6 +17,7 @@ package server
 import (
 	"context"
 	"errors"
+	"io/ioutil"
 	"strings"
 
 	pb "github.com/casbin/casbin-server/proto"
@@ -78,6 +79,15 @@ func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*p
 		if err != nil {
 			return &pb.NewEnforcerReply{Handler: 0}, err
 		}
+	}
+
+	if in.ModelText == "" {
+		cfg := LoadConfiguration("config/connection_config.json")
+		data, err := ioutil.ReadFile(cfg.Enforcer)
+		if err != nil {
+			return &pb.NewEnforcerReply{Handler: 0}, err
+		}
+		in.ModelText = string(data)
 	}
 
 	if a == nil {

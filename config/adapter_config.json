@@ -1,4 +1,0 @@
-{
-  "driver": "file",
-  "connection": "examples/rbac_policy.csv"
-}
