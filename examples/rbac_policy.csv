@@ -4,3 +4,9 @@ p, data2_admin, data2, read
 p, data2_admin, data2, write
 
 g, alice, data2_admin
+
+g, george, data3_admin
+g, data3_admin, data4_admin
+
+p, data3_admin, data3, admin
+p, data4_admin, data4, read

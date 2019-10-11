@@ -34,6 +34,18 @@ func testGetRoles(t *testing.T, e *testEngine, name string, res []string) {
 	}
 }
 
+func testGetImplicitRoles(t *testing.T, e *testEngine, name string, res []string) {
+	t.Helper()
+	reply, err := e.s.GetImplicitRolesForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: name})
+	assert.NoError(t, err)
+
+	t.Log("Implicit Roles for ", name, ": ", reply.Array)
+
+	if !util.SetEquals(res, reply.Array) {
+		t.Error("Implicit Roles for ", name, ": ", reply.Array, ", supposed to be ", res)
+	}
+}
+
 func testGetUsers(t *testing.T, e *testEngine, name string, res []string) {
 	t.Helper()
 	reply, err := e.s.GetUsersForRole(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: name})
@@ -83,6 +95,10 @@ func TestRoleAPI(t *testing.T) {
 	testGetRoles(t, e, "bob", []string{})
 	testGetRoles(t, e, "data2_admin", []string{})
 
+	testGetImplicitRoles(t, e, "alice", []string{"data2_admin"})
+	testGetImplicitRoles(t, e, "bob", []string{})
+	testGetImplicitRoles(t, e, "george", []string{"data3_admin", "data4_admin"})
+
 	_, err = e.s.DeleteRolesForUser(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: "alice"})
 	assert.NoError(t, err)
 
@@ -111,6 +127,9 @@ func TestRoleAPI(t *testing.T) {
 	testEnforce(t, e, "bob", "data1", "write", false)
 	testEnforce(t, e, "bob", "data2", "read", false)
 	testEnforce(t, e, "bob", "data2", "write", true)
+	testEnforce(t, e, "bob", "data4", "read", false)
+	testEnforce(t, e, "george", "data4", "write", false)
+	testEnforce(t, e, "george", "data4", "read", true)
 
 	_, err = e.s.DeleteRole(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, Role: "data2_admin"})
 	assert.NoError(t, err)
@@ -123,6 +142,14 @@ func TestRoleAPI(t *testing.T) {
 	testEnforce(t, e, "bob", "data1", "write", false)
 	testEnforce(t, e, "bob", "data2", "read", false)
 	testEnforce(t, e, "bob", "data2", "write", true)
+
+	testGetPermissions(t, e, "alice", [][]string{{"alice", "data1", "read"}}) //Added these in this class as it's part of RBAC.
+	testGetPermissions(t, e, "bob", [][]string{{"bob","data2", "write"}})
+	testGetPermissions(t, e, "george", [][]string{})
+	testGetPermissions(t, e, "data3_admin", [][]string{{"data3_admin", "data3", "admin"}})
+
+	testGetImplicitPermissions(t, e, "bob", [][]string{{"bob","data2", "write"}})
+	testGetImplicitPermissions(t, e, "data3_admin", [][]string{{"data3_admin", "data3", "admin"},{"data4_admin", "data4", "read"}})
 }
 
 func testGetPermissions(t *testing.T, e *testEngine, name string, res [][]string) {
@@ -135,6 +162,19 @@ func testGetPermissions(t *testing.T, e *testEngine, name string, res [][]string
 
 	if !util.Array2DEquals(res, myRes) {
 		t.Error("Permissions for ", name, ": ", myRes, ", supposed to be ", res)
+	}
+}
+
+func testGetImplicitPermissions(t *testing.T, e *testEngine, name string, res [][]string) {
+	t.Helper()
+	reply, err := e.s.GetImplicitPermissionsForUser(e.ctx, &pb.PermissionRequest{EnforcerHandler: e.h, User: name})
+	assert.NoError(t, err)
+
+	myRes := extractFromArray2DReply(reply)
+	t.Log("Implicit Permissions for ", name, ": ", myRes)
+
+	if !util.Array2DEquals(res, myRes) {
+		t.Error("Implicit Permissions for ", name, ": ", myRes, ", supposed to be ", res)
 	}
 }
 
