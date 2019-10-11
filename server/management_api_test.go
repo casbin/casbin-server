@@ -45,25 +45,25 @@ func TestGetList(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	testStringList(t, "Subjects", extractFromArrayReply(subjects), []string{"alice", "bob", "data2_admin"})
+	testStringList(t, "Subjects", extractFromArrayReply(subjects), []string{"alice", "bob", "data2_admin", "data3_admin", "data4_admin"})
 
 	objects, err := e.s.GetAllObjects(e.ctx, &pb.EmptyRequest{Handler: e.h})
 	if err != nil {
 		t.Fatal(err)
 	}
-	testStringList(t, "Objects", extractFromArrayReply(objects), []string{"data1", "data2"})
+	testStringList(t, "Objects", extractFromArrayReply(objects), []string{"data1", "data2", "data3", "data4"})
 
 	actions, err := e.s.GetAllActions(e.ctx, &pb.EmptyRequest{Handler: e.h})
 	if err != nil {
 		t.Fatal(err)
 	}
-	testStringList(t, "Actions", extractFromArrayReply(actions), []string{"read", "write"})
+	testStringList(t, "Actions", extractFromArrayReply(actions), []string{"read", "write", "admin"})
 
 	roles, err := e.s.GetAllRoles(e.ctx, &pb.EmptyRequest{Handler: e.h})
 	if err != nil {
 		t.Fatal(err)
 	}
-	testStringList(t, "Roles", extractFromArrayReply(roles), []string{"data2_admin"})
+	testStringList(t, "Roles", extractFromArrayReply(roles), []string{"data2_admin", "data3_admin", "data4_admin"})
 }
 
 func extractFromArray2DReply(reply *pb.Array2DReply) [][]string {
@@ -168,7 +168,9 @@ func TestGetPolicyAPI(t *testing.T) {
 		{"alice", "data1", "read"},
 		{"bob", "data2", "write"},
 		{"data2_admin", "data2", "read"},
-		{"data2_admin", "data2", "write"}})
+		{"data2_admin", "data2", "write"},
+		{"data3_admin", "data3", "admin"},
+		{"data4_admin", "data4", "read"}})
 
 	testGetFilteredPolicy(t, e, 0, [][]string{{"alice", "data1", "read"}}, "alice")
 	testGetFilteredPolicy(t, e, 0, [][]string{{"bob", "data2", "write"}}, "bob")
@@ -177,7 +179,7 @@ func TestGetPolicyAPI(t *testing.T) {
 	testGetFilteredPolicy(t, e, 1, [][]string{{"alice", "data1", "read"}}, "data1")
 	testGetFilteredPolicy(t, e, 1, [][]string{{"bob", "data2", "write"}, {"data2_admin", "data2", "read"},
 		{"data2_admin", "data2", "write"}}, "data2")
-	testGetFilteredPolicy(t, e, 2, [][]string{{"alice", "data1", "read"}, {"data2_admin", "data2", "read"}}, "read")
+	testGetFilteredPolicy(t, e, 2, [][]string{{"alice", "data1", "read"}, {"data2_admin", "data2", "read"},{"data4_admin", "data4", "read"}}, "read")
 	testGetFilteredPolicy(t, e, 2, [][]string{{"bob", "data2", "write"}, {"data2_admin", "data2", "write"}}, "write")
 
 	testGetFilteredPolicy(t, e, 0, [][]string{{"data2_admin", "data2", "read"},
@@ -192,7 +194,7 @@ func TestGetPolicyAPI(t *testing.T) {
 	testHasPolicy(t, e, []string{"alice", "data2", "read"}, false)
 	testHasPolicy(t, e, []string{"bob", "data3", "write"}, false)
 
-	testGetGroupingPolicy(t, e, [][]string{{"alice", "data2_admin"}})
+	testGetGroupingPolicy(t, e, [][]string{{"alice", "data2_admin"},{"george", "data3_admin"},{"data3_admin", "data4_admin"}})
 
 	testGetFilteredGroupingPolicy(t, e, 0, [][]string{{"alice", "data2_admin"}}, "alice")
 	testGetFilteredGroupingPolicy(t, e, 0, [][]string{}, "bob")
@@ -212,7 +214,9 @@ func TestModifyPolicyAPI(t *testing.T) {
 		{"alice", "data1", "read"},
 		{"bob", "data2", "write"},
 		{"data2_admin", "data2", "read"},
-		{"data2_admin", "data2", "write"}})
+		{"data2_admin", "data2", "write"},
+		{"data3_admin", "data3", "admin"},
+		{"data4_admin", "data4", "read"}})
 
 	_, err := e.s.RemovePolicy(e.ctx, &pb.PolicyRequest{EnforcerHandler: e.h, Params: []string{"alice", "data1", "read"}})
 	assert.NoError(t, err)
@@ -235,12 +239,17 @@ func TestModifyPolicyAPI(t *testing.T) {
 	testGetPolicy(t, e, [][]string{
 		{"data2_admin", "data2", "read"},
 		{"data2_admin", "data2", "write"},
+		{"data3_admin", "data3", "admin"},
+		{"data4_admin", "data4", "read"},
 		{"eve", "data3", "read"}})
 
 	_, err = e.s.RemoveFilteredPolicy(e.ctx, &pb.FilteredPolicyRequest{EnforcerHandler: e.h, FieldIndex: 1, FieldValues: []string{"data2"}})
 	assert.NoError(t, err)
 
-	testGetPolicy(t, e, [][]string{{"eve", "data3", "read"}})
+	_, err = e.s.RemoveFilteredPolicy(e.ctx, &pb.FilteredPolicyRequest{EnforcerHandler: e.h, FieldIndex: 1, FieldValues: []string{"data4"}})
+	assert.NoError(t, err)
+
+	testGetPolicy(t, e, [][]string{{"data3_admin", "data3", "admin"},{"eve", "data3", "read"}})
 }
 
 func TestModifyGroupingPolicyAPI(t *testing.T) {
@@ -281,7 +290,8 @@ func TestModifyGroupingPolicyAPI(t *testing.T) {
 
 	testGetUsers(t, e, "data1_admin", []string{"bob"})
 	testGetUsers(t, e, "data2_admin", []string{})
-	testGetUsers(t, e, "data3_admin", []string{"eve"})
+	testGetUsers(t, e, "data3_admin", []string{"eve", "george"})
+	testGetUsers(t, e, "data4_admin", []string{"data3_admin"})
 
 	_, err = e.s.RemoveFilteredGroupingPolicy(e.ctx,
 		&pb.FilteredPolicyRequest{EnforcerHandler: e.h, FieldIndex: 0, FieldValues: []string{"bob"}})
@@ -294,5 +304,5 @@ func TestModifyGroupingPolicyAPI(t *testing.T) {
 
 	testGetUsers(t, e, "data1_admin", []string{})
 	testGetUsers(t, e, "data2_admin", []string{})
-	testGetUsers(t, e, "data3_admin", []string{"eve"})
+	testGetUsers(t, e, "data3_admin", []string{"george","eve"})
 }

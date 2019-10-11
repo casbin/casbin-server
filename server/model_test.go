@@ -30,6 +30,8 @@ func testEnforce(t *testing.T, e *testEngine, sub string, obj string, act string
 
 	if reply.Res != res {
 		t.Errorf("%s, %v, %s: %t, supposed to be %t", sub, obj, act, !res, res)
+	} else {
+		t.Logf("Enforce for %s, %s, %s : %v", sub, obj, act, reply.Res)
 	}
 }
 
