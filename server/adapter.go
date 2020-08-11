@@ -19,6 +19,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"regexp"
+	"strings"
 
 	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/v2/persist"
@@ -66,13 +68,14 @@ func checkLocalConfig(in *pb.NewAdapterRequest) *pb.NewAdapterRequest {
 	if in.ConnectString == "" || in.DriverName == "" {
 		in.DriverName = cfg.Driver
 		in.ConnectString = cfg.Connection
+		in.DbSpecified = cfg.DBSpecified
 	}
 	return in
 }
 
 func LoadConfiguration(file string) Config {
 	//Loads a default config from adapter_config in case a custom adapter isn't provided by the client.
-	//DriverName and ConnectionString can be configured in the file. Defaults to 'file' mode.
+	//DriverName, ConnectionString, and dbSpecified can be configured in the file. Defaults to 'file' mode.
 
 	configFile, err := os.Open(file)
 	if err != nil {
@@ -81,11 +84,17 @@ func LoadConfiguration(file string) Config {
 	decoder := json.NewDecoder(configFile)
 	config := Config{}
 	decoder.Decode(&config)
+	re := regexp.MustCompile(`\$\b((\w*))\b`)
+	config.Connection = re.ReplaceAllStringFunc(config.Connection, func(s string) string {
+		return os.Getenv(strings.TrimPrefix(s, `$`))
+	})
+
 	return config
 }
 
 type Config struct {
-	Driver string
-	Connection string
-	Enforcer string
+	Driver      string
+	Connection  string
+	Enforcer    string
+	DBSpecified bool
 }
