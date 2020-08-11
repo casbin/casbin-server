@@ -49,6 +49,17 @@ Similar to Casbin, Casbin-Server also uses adapters to provide policy storage. H
 
 For now, only [Gorm Adapter](https://github.com/casbin/casbin-server/blob/master/server/adapter.go) is built-in with ``mssql``, ``mysql``, ``postgres`` imports all commented. If you want to use ``Gorm Adapter`` with one of those databases, you should uncomment that import line, or add your own import, or even use another adapter by modifying Casbin-Server's source code.
 
+To allow Casbin-Server to be production-ready, the adapter configuration supports environment variables. For example, assume we created a ``postgres`` database for our RBAC model and want Casbin-Server to use it. Assuming that the environment in which the Casbin-Server runs contains the necessary variables, we can simply use the ``$ENV_VAR`` notation to provide these to the adapter.
+
+```
+{
+  "driver": "postgres",
+  "connection": "host=$DB_HOST port=$DB_PORT user=$DB_USERNAME dbname=$DB_NAME password=$DB_PASSWORD",
+  "enforcer": "examples/rbac_policy.csv",
+  "dbSpecified" : true
+}
+```
+ 
 ## Limitation of ABAC
 
 Casbin-Server also supports the ABAC model as the Casbin library does. You may wonder how Casbin-Server passes the Go structs to the server-side via network? Good question. In fact, Casbin-Server's client dumps Go struct into JSON and transmits the JSON string prefixed by ``ABAC::`` to Casbin-Server. Casbin-Server will recognize the prefix and load the JSON string into a pre-defined Go struct with 11 string members, then pass it to Casbin. So there will be several limitations for Casbin-Server's ABAC compared to Casbin's ABAC:
