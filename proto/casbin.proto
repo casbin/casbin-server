@@ -69,9 +69,21 @@ service Casbin {
   rpc GetRolesForUser (UserRoleRequest) returns (ArrayReply) {}
   rpc GetImplicitRolesForUser (UserRoleRequest) returns (ArrayReply) {}
   rpc GetUsersForRole (UserRoleRequest) returns (ArrayReply) {}
+  rpc HasRoleForUser (UserRoleRequest) returns (BoolReply) {}
+  rpc AddRoleForUser (UserRoleRequest) returns (BoolReply) {}
+  rpc DeleteRoleForUser (UserRoleRequest) returns (BoolReply) {}
+  rpc DeleteRolesForUser (UserRoleRequest) returns (BoolReply) {}
+  rpc DeleteUser (UserRoleRequest) returns (BoolReply) {}
+  rpc DeleteRole (UserRoleRequest) returns (EmptyReply) {}
 
   rpc GetPermissionsForUser (PermissionRequest) returns (Array2DReply) {}
   rpc GetImplicitPermissionsForUser (PermissionRequest) returns (Array2DReply) {}
+  rpc DeletePermission (PermissionRequest) returns (BoolReply) {}
+  rpc AddPermissionForUser (PermissionRequest) returns (BoolReply) {}
+  rpc DeletePermissionForUser (PermissionRequest) returns (BoolReply) {}
+  rpc DeletePermissionsForUser (PermissionRequest) returns (BoolReply) {}
+  rpc HasPermissionForUser (PermissionRequest) returns (BoolReply) {}
+
 }
 
 message NewEnforcerRequest {
