@@ -1,4 +1,4 @@
-FROM golang:1.12
+FROM golang:1.16 as builder
 
 RUN apt-get update && \
     apt-get -y install git unzip build-essential autoconf libtool
@@ -32,8 +32,13 @@ RUN protoc -I proto --go_out=plugins=grpc:proto proto/casbin.proto
 # Download dependencies
 RUN go mod download
 
-# Install app
-RUN go install .
-ENTRYPOINT $GOPATH/bin/casbin-server
+# Build app
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -o casbin-server
 
+
+FROM alpine:3.13
+WORKDIR /
+COPY --from=builder /go/src/github.com/casbin/casbin-server/casbin-server ./casbin-server
+USER 65532:65532
 EXPOSE 50051
+ENTRYPOINT ./casbin-server
