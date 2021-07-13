@@ -1,4 +1,4 @@
-FROM golang:1.12
+FROM golang:1.13
 
 RUN apt-get update && \
     apt-get -y install git unzip build-essential autoconf libtool
