@@ -1,6 +1,6 @@
 module github.com/casbin/casbin-server
 
-go 1.12
+go 1.16
 
 require (
 	github.com/casbin/casbin/v2 v2.0.2
