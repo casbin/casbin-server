@@ -39,7 +39,7 @@ func (s *Server) GetImplicitRolesForUser(ctx context.Context, in *pb.UserRoleReq
 		return &pb.ArrayReply{}, err
 	}
 	res, err := e.GetImplicitRolesForUser(in.User)
-	return &pb.ArrayReply{Array: res}, nil
+	return &pb.ArrayReply{Array: res}, err
 }
 
 // GetUsersForRole gets the users that has a role.
@@ -199,7 +199,7 @@ func (s *Server) GetImplicitPermissionsForUser(ctx context.Context, in *pb.Permi
 		return &pb.Array2DReply{}, err
 	}
 	resp, err := e.GetImplicitPermissionsForUser(in.User)
-	return s.wrapPlainPolicy(resp), nil
+	return s.wrapPlainPolicy(resp), err
 }
 
 // HasPermissionForUser determines whether a user has a permission.
