@@ -101,7 +101,6 @@ func LoadConfiguration(file string) Config {
 	config.Connection = re.ReplaceAllStringFunc(config.Connection, func(s string) string {
 		return os.Getenv(strings.TrimPrefix(s, `$`))
 	})
-	config.Enforcer = re.ReplaceAllString(config.Enforcer, os.Getenv(strings.TrimPrefix(config.Enforcer, `$`)))
 
 	return config
 }
