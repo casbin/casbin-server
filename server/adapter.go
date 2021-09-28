@@ -75,7 +75,7 @@ func checkLocalConfig(in *pb.NewAdapterRequest) *pb.NewAdapterRequest {
 
 const (
 	configFileDefaultPath             = "config/connection_config.json"
-	configFilePathEnvironmentVariable = "CASBIN_CONFIG_PATH"
+	configFilePathEnvironmentVariable = "CONNECTION_CONFIG_PATH"
 )
 
 func getLocalConfigPath() string {
