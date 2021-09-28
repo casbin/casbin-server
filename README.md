@@ -60,6 +60,7 @@ To allow Casbin-Server to be production-ready, the adapter configuration support
   "dbSpecified" : true
 }
 ```
+The connection config file path can also be set using the environment variable `CONNECTION_CONFIG_PATH`. If this variable is not set, connection config is read from the path "config/connection_config.json".
  
 ## Limitation of ABAC
 
