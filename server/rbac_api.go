@@ -49,7 +49,7 @@ func (s *Server) GetUsersForRole(ctx context.Context, in *pb.UserRoleRequest) (*
 		return &pb.ArrayReply{}, err
 	}
 
-	res, _ := e.GetModel()["g"]["g"].RM.GetUsers(in.User)
+	res, _ := e.GetModel()["g"]["g"].RM.GetUsers(in.Role)
 
 	return &pb.ArrayReply{Array: res}, nil
 }
