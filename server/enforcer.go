@@ -82,7 +82,7 @@ func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*p
 	}
 
 	if in.ModelText == "" {
-		cfg := LoadConfiguration("config/connection_config.json")
+		cfg := LoadConfiguration(getLocalConfigPath())
 		data, err := ioutil.ReadFile(cfg.Enforcer)
 		if err != nil {
 			return &pb.NewEnforcerReply{Handler: 0}, err

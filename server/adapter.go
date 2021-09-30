@@ -24,8 +24,8 @@ import (
 
 	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/v2/persist"
-	"github.com/casbin/casbin/v2/persist/file-adapter"
-	"github.com/casbin/gorm-adapter/v2"
+	fileadapter "github.com/casbin/casbin/v2/persist/file-adapter"
+	gormadapter "github.com/casbin/gorm-adapter/v2"
 	//_ "github.com/jinzhu/gorm/dialects/mssql"
 	//_ "github.com/jinzhu/gorm/dialects/mysql"
 	//_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -64,13 +64,26 @@ func newAdapter(in *pb.NewAdapterRequest) (persist.Adapter, error) {
 }
 
 func checkLocalConfig(in *pb.NewAdapterRequest) *pb.NewAdapterRequest {
-	cfg := LoadConfiguration("config/connection_config.json")
+	cfg := LoadConfiguration(getLocalConfigPath())
 	if in.ConnectString == "" || in.DriverName == "" {
 		in.DriverName = cfg.Driver
 		in.ConnectString = cfg.Connection
 		in.DbSpecified = cfg.DBSpecified
 	}
 	return in
+}
+
+const (
+	configFileDefaultPath             = "config/connection_config.json"
+	configFilePathEnvironmentVariable = "CONNECTION_CONFIG_PATH"
+)
+
+func getLocalConfigPath() string {
+	configFilePath := os.Getenv(configFilePathEnvironmentVariable)
+	if configFilePath == "" {
+		configFilePath = configFileDefaultPath
+	}
+	return configFilePath
 }
 
 func LoadConfiguration(file string) Config {
