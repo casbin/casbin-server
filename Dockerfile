@@ -15,14 +15,14 @@ RUN git clone https://github.com/google/protobuf.git && \
     cd .. && \
     rm -r protobuf
 
+# Go environment variable to enable Go modules
+ENV GO111MODULE=on
+
 # Get grpc
 RUN go get google.golang.org/grpc
 
 # Install protoc-gen-go
 RUN go get github.com/golang/protobuf/protoc-gen-go
-
-# Go environment variable to enable Go modules
-ENV GO111MODULE=on
 
 # Copy the source and generate the .proto file
 ADD . /go/src/github.com/casbin/casbin-server
