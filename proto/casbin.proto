@@ -18,7 +18,7 @@ option java_multiple_files = true;
 option java_package = "io.grpc.examples.proto";
 option java_outer_classname = "CasbinProto";
 option go_package = "./;proto";
-option csharp_namespace = "Casbin.Grpc";
+option csharp_namespace = "CasbinOrg.Grpc";
 
 package proto;
 
@@ -101,7 +101,7 @@ message NewAdapterRequest {
   string adapterName = 1;
   string driverName = 2;
   string connectString = 3;
-  bool dbSpecified =4;
+  bool dbSpecified = 4;
 }
 
 message NewAdapterReply {
