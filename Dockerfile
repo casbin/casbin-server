@@ -40,10 +40,3 @@ RUN go install .
 ENTRYPOINT $GOPATH/bin/casbin-server
 
 EXPOSE 50051
-
-
-
-
-
-
-
