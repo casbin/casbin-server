@@ -94,3 +94,8 @@ func resolveABAC(obj string) (AbacAttrList, error) {
 
 	return attrList, nil
 }
+
+func (attr AbacAttrList) GetCacheKey() string {
+	res, _ := MakeABAC(&attr)
+	return res
+}
