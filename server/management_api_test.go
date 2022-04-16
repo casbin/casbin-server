@@ -179,7 +179,7 @@ func TestGetPolicyAPI(t *testing.T) {
 	testGetFilteredPolicy(t, e, 1, [][]string{{"alice", "data1", "read"}}, "data1")
 	testGetFilteredPolicy(t, e, 1, [][]string{{"bob", "data2", "write"}, {"data2_admin", "data2", "read"},
 		{"data2_admin", "data2", "write"}}, "data2")
-	testGetFilteredPolicy(t, e, 2, [][]string{{"alice", "data1", "read"}, {"data2_admin", "data2", "read"},{"data4_admin", "data4", "read"}}, "read")
+	testGetFilteredPolicy(t, e, 2, [][]string{{"alice", "data1", "read"}, {"data2_admin", "data2", "read"}, {"data4_admin", "data4", "read"}}, "read")
 	testGetFilteredPolicy(t, e, 2, [][]string{{"bob", "data2", "write"}, {"data2_admin", "data2", "write"}}, "write")
 
 	testGetFilteredPolicy(t, e, 0, [][]string{{"data2_admin", "data2", "read"},
@@ -194,7 +194,7 @@ func TestGetPolicyAPI(t *testing.T) {
 	testHasPolicy(t, e, []string{"alice", "data2", "read"}, false)
 	testHasPolicy(t, e, []string{"bob", "data3", "write"}, false)
 
-	testGetGroupingPolicy(t, e, [][]string{{"alice", "data2_admin"},{"george", "data3_admin"},{"data3_admin", "data4_admin"}})
+	testGetGroupingPolicy(t, e, [][]string{{"alice", "data2_admin"}, {"george", "data3_admin"}, {"data3_admin", "data4_admin"}})
 
 	testGetFilteredGroupingPolicy(t, e, 0, [][]string{{"alice", "data2_admin"}}, "alice")
 	testGetFilteredGroupingPolicy(t, e, 0, [][]string{}, "bob")
@@ -249,7 +249,7 @@ func TestModifyPolicyAPI(t *testing.T) {
 	_, err = e.s.RemoveFilteredPolicy(e.ctx, &pb.FilteredPolicyRequest{EnforcerHandler: e.h, FieldIndex: 1, FieldValues: []string{"data4"}})
 	assert.NoError(t, err)
 
-	testGetPolicy(t, e, [][]string{{"data3_admin", "data3", "admin"},{"eve", "data3", "read"}})
+	testGetPolicy(t, e, [][]string{{"data3_admin", "data3", "admin"}, {"eve", "data3", "read"}})
 }
 
 func TestModifyGroupingPolicyAPI(t *testing.T) {
@@ -304,5 +304,5 @@ func TestModifyGroupingPolicyAPI(t *testing.T) {
 
 	testGetUsers(t, e, "data1_admin", []string{})
 	testGetUsers(t, e, "data2_admin", []string{})
-	testGetUsers(t, e, "data3_admin", []string{"george","eve"})
+	testGetUsers(t, e, "data3_admin", []string{"george", "eve"})
 }

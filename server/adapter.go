@@ -25,10 +25,11 @@ import (
 	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/v2/persist"
 	fileadapter "github.com/casbin/casbin/v2/persist/file-adapter"
-	gormadapter "github.com/casbin/gorm-adapter/v2"
+	gormadapter "github.com/casbin/gorm-adapter/v3"
+
 	//_ "github.com/jinzhu/gorm/dialects/mssql"
-	//_ "github.com/jinzhu/gorm/dialects/mysql"
-	//_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 var errDriverName = errors.New("currently supported DriverName: file | mysql | postgres | mssql")

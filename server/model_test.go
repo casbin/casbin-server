@@ -100,8 +100,8 @@ func TestABACModel(t *testing.T) {
 	}
 	e := resp.Handler
 
-	data1, _ := MakeABAC(ABACModel{Name:"data1",Owner:"alice"})
-	data2, _ := MakeABAC(ABACModel{Name:"data2",Owner:"bob"})
+	data1, _ := MakeABAC(ABACModel{Name: "data1", Owner: "alice"})
+	data2, _ := MakeABAC(ABACModel{Name: "data2", Owner: "bob"})
 
 	testModel(t, s, e, "alice", data1, "read", true)
 	testModel(t, s, e, "alice", data1, "write", true)
@@ -117,7 +117,7 @@ func TestABACModel(t *testing.T) {
 func testModel(t *testing.T, s *Server, enforcerHandler int32, sub string, obj string, act string, res bool) {
 	t.Helper()
 
-	reply, err := s.Enforce(nil, &pb.EnforceRequest{EnforcerHandler: enforcerHandler, Params: []string{sub, obj, act}})
+	reply, err := s.Enforce(context.TODO(), &pb.EnforceRequest{EnforcerHandler: enforcerHandler, Params: []string{sub, obj, act}})
 	assert.NoError(t, err)
 
 	if reply.Res != res {

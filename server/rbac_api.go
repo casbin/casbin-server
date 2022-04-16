@@ -189,7 +189,10 @@ func (s *Server) GetPermissionsForUser(ctx context.Context, in *pb.PermissionReq
 		return &pb.Array2DReply{}, err
 	}
 
-	return s.wrapPlainPolicy(e.GetFilteredPolicy(0, in.User)), nil
+	var filter = []string{in.User}
+	filter = append(filter, in.Permissions...)
+
+	return s.wrapPlainPolicy(e.GetFilteredPolicy(0, filter...)), nil
 }
 
 // GetImplicitPermissionsForUser gets all permissions(including children) for a user or role.
