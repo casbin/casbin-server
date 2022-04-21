@@ -96,12 +96,7 @@ func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*p
 			return &pb.NewEnforcerReply{Handler: 0}, err
 		}
 
-		a, err = newAdapter(&pb.NewAdapterRequest{})
-		if err != nil {
-			return &pb.NewEnforcerReply{Handler: 0}, err
-		}
-
-		e, err = casbin.NewEnforcer(m, a)
+		e, err = casbin.NewEnforcer(m, false)
 		if err != nil {
 			return &pb.NewEnforcerReply{Handler: 0}, err
 		}

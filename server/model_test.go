@@ -100,8 +100,8 @@ func TestABACModel(t *testing.T) {
 	}
 	e := resp.Handler
 
-	data1, _ := MakeABAC(ABACModel{Name:"data1",Owner:"alice"})
-	data2, _ := MakeABAC(ABACModel{Name:"data2",Owner:"bob"})
+	data1, _ := MakeABAC(ABACModel{Name: "data1", Owner: "alice"})
+	data2, _ := MakeABAC(ABACModel{Name: "data2", Owner: "bob"})
 
 	testModel(t, s, e, "alice", data1, "read", true)
 	testModel(t, s, e, "alice", data1, "write", true)
