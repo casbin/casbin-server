@@ -32,7 +32,7 @@ func (s *Server) GetRolesForUser(ctx context.Context, in *pb.UserRoleRequest) (*
 	return &pb.ArrayReply{Array: res}, nil
 }
 
-// GetImplicitPermissionsForUser gets all permissions(including children) for a user or role.
+// GetImplicitRolesForUser gets implicit roles that a user has.
 func (s *Server) GetImplicitRolesForUser(ctx context.Context, in *pb.UserRoleRequest) (*pb.ArrayReply, error) {
 	e, err := s.getEnforcer(int(in.EnforcerHandler))
 	if err != nil {
@@ -42,7 +42,7 @@ func (s *Server) GetImplicitRolesForUser(ctx context.Context, in *pb.UserRoleReq
 	return &pb.ArrayReply{Array: res}, err
 }
 
-// GetUsersForRole gets the users that has a role.
+// GetUsersForRole gets the users that have a role.
 func (s *Server) GetUsersForRole(ctx context.Context, in *pb.UserRoleRequest) (*pb.ArrayReply, error) {
 	e, err := s.getEnforcer(int(in.EnforcerHandler))
 	if err != nil {
