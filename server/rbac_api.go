@@ -16,6 +16,7 @@ package server
 
 import (
 	"context"
+	"errors"
 
 	pb "github.com/casbin/casbin-server/proto"
 )
@@ -27,7 +28,12 @@ func (s *Server) GetRolesForUser(ctx context.Context, in *pb.UserRoleRequest) (*
 		return &pb.ArrayReply{}, err
 	}
 
-	res, _ := e.GetModel()["g"]["g"].RM.GetRoles(in.User)
+	rm := e.GetModel()["g"]["g"].RM
+	if rm == nil {
+		return nil, errors.New("no grouping policy")
+	}
+
+	res, _ := rm.GetRoles(in.User)
 
 	return &pb.ArrayReply{Array: res}, nil
 }
@@ -49,7 +55,12 @@ func (s *Server) GetUsersForRole(ctx context.Context, in *pb.UserRoleRequest) (*
 		return &pb.ArrayReply{}, err
 	}
 
-	res, _ := e.GetModel()["g"]["g"].RM.GetUsers(in.Role)
+	rm := e.GetModel()["g"]["g"].RM
+	if rm == nil {
+		return nil, errors.New("no grouping policy")
+	}
+
+	res, _ := rm.GetUsers(in.Role)
 
 	return &pb.ArrayReply{Array: res}, nil
 }
