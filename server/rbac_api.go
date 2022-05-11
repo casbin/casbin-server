@@ -30,7 +30,7 @@ func (s *Server) GetRolesForUser(ctx context.Context, in *pb.UserRoleRequest) (*
 
 	rm := e.GetModel()["g"]["g"].RM
 	if rm == nil {
-		return nil, errors.New("no grouping policy")
+		return nil, errors.New("no grouping RoleManager")
 	}
 
 	res, _ := rm.GetRoles(in.User)
@@ -57,7 +57,7 @@ func (s *Server) GetUsersForRole(ctx context.Context, in *pb.UserRoleRequest) (*
 
 	rm := e.GetModel()["g"]["g"].RM
 	if rm == nil {
-		return nil, errors.New("no grouping policy")
+		return nil, errors.New("no grouping RoleManager")
 	}
 
 	res, _ := rm.GetUsers(in.Role)
