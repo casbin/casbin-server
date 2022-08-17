@@ -19,6 +19,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"strings"
+	"sync"
 
 	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin/v2"
@@ -30,6 +31,7 @@ import (
 type Server struct {
 	enforcerMap map[int]*casbin.Enforcer
 	adapterMap  map[int]persist.Adapter
+	mu          sync.RWMutex
 }
 
 func NewServer() *Server {
@@ -42,28 +44,40 @@ func NewServer() *Server {
 }
 
 func (s *Server) getEnforcer(handle int) (*casbin.Enforcer, error) {
-	if _, ok := s.enforcerMap[handle]; ok {
-		return s.enforcerMap[handle], nil
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	if e, ok := s.enforcerMap[handle]; ok {
+		return e, nil
 	} else {
 		return nil, errors.New("enforcer not found")
 	}
 }
 
 func (s *Server) getAdapter(handle int) (persist.Adapter, error) {
-	if _, ok := s.adapterMap[handle]; ok {
-		return s.adapterMap[handle], nil
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	if a, ok := s.adapterMap[handle]; ok {
+		return a, nil
 	} else {
 		return nil, errors.New("adapter not found")
 	}
 }
 
 func (s *Server) addEnforcer(e *casbin.Enforcer) int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	cnt := len(s.enforcerMap)
 	s.enforcerMap[cnt] = e
 	return cnt
 }
 
 func (s *Server) addAdapter(a persist.Adapter) int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	cnt := len(s.adapterMap)
 	s.adapterMap[cnt] = a
 	return cnt
