@@ -31,7 +31,8 @@ import (
 type Server struct {
 	enforcerMap map[int]*casbin.Enforcer
 	adapterMap  map[int]persist.Adapter
-	mu          sync.RWMutex
+	muE         sync.RWMutex
+	muA         sync.RWMutex
 }
 
 func NewServer() *Server {
@@ -44,8 +45,8 @@ func NewServer() *Server {
 }
 
 func (s *Server) getEnforcer(handle int) (*casbin.Enforcer, error) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
+	s.muE.RLock()
+	defer s.muE.RUnlock()
 
 	if e, ok := s.enforcerMap[handle]; ok {
 		return e, nil
@@ -55,8 +56,8 @@ func (s *Server) getEnforcer(handle int) (*casbin.Enforcer, error) {
 }
 
 func (s *Server) getAdapter(handle int) (persist.Adapter, error) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
+	s.muA.RLock()
+	defer s.muA.RUnlock()
 
 	if a, ok := s.adapterMap[handle]; ok {
 		return a, nil
@@ -66,8 +67,8 @@ func (s *Server) getAdapter(handle int) (persist.Adapter, error) {
 }
 
 func (s *Server) addEnforcer(e *casbin.Enforcer) int {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	s.muE.Lock()
+	defer s.muE.Unlock()
 
 	cnt := len(s.enforcerMap)
 	s.enforcerMap[cnt] = e
@@ -75,8 +76,8 @@ func (s *Server) addEnforcer(e *casbin.Enforcer) int {
 }
 
 func (s *Server) addAdapter(a persist.Adapter) int {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	s.muA.Lock()
+	defer s.muA.Unlock()
 
 	cnt := len(s.adapterMap)
 	s.adapterMap[cnt] = a
