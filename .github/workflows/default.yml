@@ -32,8 +32,9 @@ jobs:
     if: github.repository == 'casbin/casbin-server' && github.event_name == 'push'
     needs: [ coveralls ]
     steps:
-      - name: Release
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+
+      - name: Run semantic-release
         run: |
           npm install --save-dev semantic-release@17.2.4
           npx semantic-release
