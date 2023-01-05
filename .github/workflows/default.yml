@@ -32,7 +32,8 @@ jobs:
     if: github.repository == 'casbin/casbin-server' && github.event_name == 'push'
     needs: [ coveralls ]
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Run semantic-release
         run: |
@@ -41,7 +42,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Decide Should_Push Or Not
+      - name: Fetch Previous version
+        id: get-previous-tag
+        uses: actions-ecosystem/action-get-latest-tag@v1.6.0
+
+      - name: Fetch Current version
+        id: get-current-tag
+        uses: actions-ecosystem/action-get-latest-tag@v1.6.0
+
+      - name: Decide Should Push Or Not
         id: should_push
         run: |
           old_version=${{steps.get-previous-tag.outputs.tag}}
