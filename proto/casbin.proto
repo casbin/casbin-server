@@ -42,6 +42,7 @@ service Casbin {
   rpc GetNamedPolicy (PolicyRequest) returns (Array2DReply) {}
   rpc GetFilteredPolicy (FilteredPolicyRequest) returns (Array2DReply) {}
   rpc GetFilteredNamedPolicy (FilteredPolicyRequest) returns (Array2DReply) {}
+  rpc UpdateGroupingPolicy(UpdateRequest) returns (BoolReply) {}
 
   rpc AddGroupingPolicy (PolicyRequest) returns (BoolReply) {}
   rpc AddNamedGroupingPolicy (PolicyRequest) returns (BoolReply) {}
@@ -128,6 +129,13 @@ message PolicyRequest {
   int32 enforcerHandler = 1;
   string pType = 2;
   repeated string params = 3;
+}
+
+message UpdateRequest {
+  int32 enforcerHandler = 1;
+  string pType = 2;
+  repeated string old = 3;
+  repeated string new = 4;
 }
 
 message SimpleGetRequest {

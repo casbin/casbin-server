@@ -244,6 +244,16 @@ func (s *Server) AddGroupingPolicy(ctx context.Context, in *pb.PolicyRequest) (*
 	return s.AddNamedGroupingPolicy(ctx, in)
 }
 
+func (s *Server) UpdateGroupingPolicy(ctx context.Context, in *pb.UpdateRequest) (*pb.BoolReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
+
+	updated, err := e.UpdateGroupingPolicy(in.Old, in.New)
+	return &pb.BoolReply{Res: updated}, err
+}
+
 // AddNamedGroupingPolicy adds a named role inheritance rule to the current policy.
 // If the rule already exists, the function returns false and the rule will not be added.
 // Otherwise the function returns true by adding the new rule.
