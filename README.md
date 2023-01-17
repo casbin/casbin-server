@@ -61,7 +61,23 @@ To allow Casbin-Server to be production-ready, the adapter configuration support
 }
 ```
 The connection config file path can also be set using the environment variable `CONNECTION_CONFIG_PATH`. If this variable is not set, connection config is read from the path "config/connection_config.json".
- 
+
+## Docker Way
+
+```
+docker run -id -p 50051:50051 --name my-casbin-server casbin/casbin-server
+```
+
+If you want to define your own connection file
+
+```
+docker run -id -p 50051:50051 \
+-e CONNECTION_CONFIG_PATH=/data/connection_config.json \
+-v ${your local file path}:/data \
+--name my-casbin-server \
+-d casbin/casbin-server
+```
+
 ## Limitation of ABAC
 
 Casbin-Server also supports the ABAC model as the Casbin library does. You may wonder how Casbin-Server passes the Go structs to the server-side via network? Good question. In fact, Casbin-Server's client dumps Go struct into JSON and transmits the JSON string prefixed by ``ABAC::`` to Casbin-Server. Casbin-Server will recognize the prefix and load the JSON string into a pre-defined Go struct with 11 string members, then pass it to Casbin. So there will be several limitations for Casbin-Server's ABAC compared to Casbin's ABAC:
