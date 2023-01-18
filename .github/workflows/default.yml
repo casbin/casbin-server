@@ -35,16 +35,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Fetch Previous version
+        id: get-previous-tag
+        uses: actions-ecosystem/action-get-latest-tag@v1.6.0
+
       - name: Run semantic-release
         run: |
           npm install --save-dev semantic-release@17.2.4
           npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Fetch Previous version
-        id: get-previous-tag
-        uses: actions-ecosystem/action-get-latest-tag@v1.6.0
 
       - name: Fetch Current version
         id: get-current-tag
