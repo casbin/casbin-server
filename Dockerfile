@@ -1,11 +1,12 @@
-FROM golang:1.16
+FROM golang:1.17
 
 RUN apt-get update && \
-    apt-get -y install git unzip build-essential autoconf libtool
+    apt-get -y install unzip build-essential autoconf libtool
 
 # Install protobuf from source
-RUN git clone --depth=1 https://github.com/protocolbuffers/protobuf.git && \
-    cd protobuf && \
+RUN curl -LjO https://github.com/protocolbuffers/protobuf/archive/refs/tags/v3.17.3.zip && \
+    unzip v3.17.3.zip && \
+    cd protobuf-3.17.3 && \
     ./autogen.sh && \
     ./configure && \
     make && \
@@ -13,10 +14,15 @@ RUN git clone --depth=1 https://github.com/protocolbuffers/protobuf.git && \
     ldconfig && \
     make clean && \
     cd .. && \
-    rm -r protobuf
+    rm -r protobuf-3.17.3 && \
+    rm v3.17.3.zip
 
 # Go environment variable to enable Go modules
-ENV GO111MODULE=on
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64
+#    GOPROXY=https://goproxy.cn,direct
 
 # Get grpc
 RUN go get google.golang.org/grpc
