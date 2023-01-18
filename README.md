@@ -2,7 +2,8 @@ Casbin Server
 ====
 
 [![GitHub Actions](https://github.com/casbin/casbin-server/actions/workflows/default.yml/badge.svg)](https://github.com/casbin/casbin-server/actions)
-[![Docker](https://img.shields.io/docker/cloud/build/casbin/casbin-server)](https://hub.docker.com/r/casbin/casbin-server/builds/)
+[![Docker](https://img.shields.io/docker/automated/casbin/casbin-server)](https://hub.docker.com/r/casbin/casbin-server/builds/)
+[![Docker Image Version (latest by date)](https://img.shields.io/docker/v/casbin/casbin-server?label=image%20version)](https://hub.docker.com/r/casbin/casbin-server/tags)
 [![Coverage Status](https://coveralls.io/repos/github/casbin/casbin-server/badge.svg?branch=master)](https://coveralls.io/github/casbin/casbin-server?branch=master)
 [![Godoc](https://godoc.org/github.com/casbin/casbin-server?status.svg)](https://godoc.org/github.com/casbin/casbin-server)
 
