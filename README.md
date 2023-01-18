@@ -78,6 +78,12 @@ docker run -id -p 50051:50051 \
 -d casbin/casbin-server
 ```
 
+If you want to build your own image
+
+```
+docker build -f ./Dockerfile -t my-casbin-server-image .
+```
+
 ## Limitation of ABAC
 
 Casbin-Server also supports the ABAC model as the Casbin library does. You may wonder how Casbin-Server passes the Go structs to the server-side via network? Good question. In fact, Casbin-Server's client dumps Go struct into JSON and transmits the JSON string prefixed by ``ABAC::`` to Casbin-Server. Casbin-Server will recognize the prefix and load the JSON string into a pre-defined Go struct with 11 string members, then pass it to Casbin. So there will be several limitations for Casbin-Server's ABAC compared to Casbin's ABAC:
