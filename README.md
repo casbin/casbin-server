@@ -1,7 +1,7 @@
 Casbin Server
 ====
 
-[![Build Status](https://travis-ci.org/casbin/casbin-server.svg?branch=master)](https://travis-ci.org/casbin/casbin-server)
+[![GitHub Actions](https://github.com/casbin/casbin-server/actions/workflows/default.yml/badge.svg)](https://github.com/casbin/casbin-server/actions)
 [![Docker](https://img.shields.io/docker/cloud/build/casbin/casbin-server)](https://hub.docker.com/r/casbin/casbin-server/builds/)
 [![Coverage Status](https://coveralls.io/repos/github/casbin/casbin-server/badge.svg?branch=master)](https://coveralls.io/github/casbin/casbin-server?branch=master)
 [![Godoc](https://godoc.org/github.com/casbin/casbin-server?status.svg)](https://godoc.org/github.com/casbin/casbin-server)
