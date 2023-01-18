@@ -1,7 +1,11 @@
-FROM golang:1.17
+FROM golang:1.17 as STANDARD
 
 RUN apt-get update && \
     apt-get -y install unzip build-essential autoconf libtool
+
+ARG TARGETOS
+ARG TARGETARCH
+ENV BUILDX_ARCH="${TARGETOS:-linux}_${TARGETARCH:-amd64}"
 
 # Install protobuf from source
 RUN curl -LjO https://github.com/protocolbuffers/protobuf/archive/refs/tags/v3.17.3.zip && \
