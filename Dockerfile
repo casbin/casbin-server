@@ -1,11 +1,11 @@
-FROM golang:1.17 as STANDARD
+FROM golang:1.17 as BACK
 
 RUN apt-get update && \
     apt-get -y install unzip build-essential autoconf libtool
 
-ARG TARGETOS
-ARG TARGETARCH
-ENV BUILDX_ARCH="${TARGETOS:-linux}_${TARGETARCH:-amd64}"
+WORKDIR /go/src
+COPY . .
+RUN ./build.sh
 
 # Install protobuf from source
 RUN curl -LjO https://github.com/protocolbuffers/protobuf/archive/refs/tags/v3.17.3.zip && \
@@ -26,7 +26,6 @@ ENV GO111MODULE=on \
     CGO_ENABLED=0 \
     GOOS=linux \
     GOARCH=amd64
-#    GOPROXY=https://goproxy.cn,direct
 
 # Get grpc
 RUN go get google.golang.org/grpc
@@ -47,6 +46,12 @@ RUN go mod download
 
 # Install app
 RUN go install .
-ENTRYPOINT $GOPATH/bin/casbin-server
+
+RUN cd /go/src && go build -o casbin-server
+
+FROM alpine:latest as STANDARD
+WORKDIR /app
+COPY --from=BACK /go/src/casbin-server /app/
+ENTRYPOINT ./casbin-server
 
 EXPOSE 50051
