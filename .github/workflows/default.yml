@@ -1,4 +1,4 @@
-name: Default
+name: Build
 
 on: [ push, pull_request ]
 
@@ -68,7 +68,6 @@ jobs:
               echo ::set-output name=push::'false'
           
           fi
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
