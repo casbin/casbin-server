@@ -24,7 +24,6 @@ Language | Author | Client
 Golang | Casbin | https://github.com/casbin/casbin-go-client
 Java | [Accept008](https://github.com/Accept008) | https://github.com/Accept008/grpc-client
 PHP | Casbin | https://github.com/php-casbin/casbin-client
-Golang | [paysuper](https://github.com/paysuper) | https://github.com/paysuper/echo-casbin-middleware
 Python | [@prathik-kaliyambath](https://github.com/prathik-kaliyambath)| https://github.com/prathik-kaliyambath/casbin-python-client
 
 Contributions for clients in other languages are welcome :)
