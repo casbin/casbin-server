@@ -1,6 +1,6 @@
 {
   "driver": "postgres",
   "connection": "host=$DB_HOST port=$DB_PORT user=$DB_USERNAME dbname=$DB_NAME password=$DB_PASSWORD",
-  "enforcer": "examples/rbac_policy.csv",
+  "enforcer": "examples/rbac_model.conf",
   "dbSpecified" : true
 }
