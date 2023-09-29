@@ -150,12 +150,14 @@ message UserRoleRequest {
   int32 enforcerHandler = 1;
   string user = 2;
   string role = 3;
+  repeated string domain =4;
 }
 
 message PermissionRequest {
   int32 enforcerHandler = 1;
   string user = 2;
   repeated string permissions = 3;
+  repeated string domain =4;
 }
 
 message Array2DReply {
