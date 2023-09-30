@@ -33,7 +33,7 @@ func (s *Server) GetRolesForUser(ctx context.Context, in *pb.UserRoleRequest) (*
 		return nil, errors.New("RoleManager is nil")
 	}
 
-	res, _ := rm.GetRoles(in.User)
+	res, _ := rm.GetRoles(in.User, in.Domain...)
 
 	return &pb.ArrayReply{Array: res}, nil
 }
@@ -209,7 +209,7 @@ func (s *Server) GetImplicitPermissionsForUser(ctx context.Context, in *pb.Permi
 	if err != nil {
 		return &pb.Array2DReply{}, err
 	}
-	resp, err := e.GetImplicitPermissionsForUser(in.User)
+	resp, err := e.GetImplicitPermissionsForUser(in.User, in.Domain...)
 	return s.wrapPlainPolicy(resp), err
 }
 
