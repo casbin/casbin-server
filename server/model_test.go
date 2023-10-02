@@ -117,7 +117,7 @@ func TestABACModel(t *testing.T) {
 func testModel(t *testing.T, s *Server, enforcerHandler int32, sub string, obj string, act string, res bool) {
 	t.Helper()
 
-	reply, err := s.Enforce(nil, &pb.EnforceRequest{EnforcerHandler: enforcerHandler, Params: []string{sub, obj, act}})
+	reply, err := s.Enforce(context.Background(), &pb.EnforceRequest{EnforcerHandler: enforcerHandler, Params: []string{sub, obj, act}})
 	assert.NoError(t, err)
 
 	if reply.Res != res {

@@ -1,4 +1,4 @@
-FROM golang:1.19 as BACK
+FROM golang:1.17 as BACK
 
 RUN apt-get update && \
     apt-get -y install unzip build-essential autoconf libtool
@@ -27,11 +27,11 @@ ENV GO111MODULE=on \
     GOARCH=amd64
 
 # Get grpc
-RUN go get google.golang.org/grpc
+RUN go get google.golang.org/grpc@v1.45.0
 
 # Install protoc-gen-go
-RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26
+RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
 
 # Copy the source and generate the .proto file
 ADD . /go/src/github.com/casbin/casbin-server
