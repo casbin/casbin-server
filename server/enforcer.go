@@ -18,6 +18,7 @@ import (
 	"context"
 	"errors"
 	"io/ioutil"
+	"log"
 	"strings"
 	"sync"
 
@@ -36,10 +37,28 @@ type Server struct {
 }
 
 func NewServer() *Server {
+
+	log.Println("Starting Server.....")
 	s := Server{}
 
 	s.enforcerMap = map[int]*casbin.Enforcer{}
 	s.adapterMap = map[int]persist.Adapter{}
+
+	// Setup base adapter and enforcer
+	log.Println("Adding default Adapter from Config")
+	var in pb.NewAdapterRequest
+	in.DriverName = ""
+	in.ConnectString = ""
+	in.DriverName = ""
+	out, error := s.NewAdapter(context.Background(), &in)
+	if error == nil {
+		log.Println("Adding default Enforcer from Config", out)
+		var in2 pb.NewEnforcerRequest
+		in2.AdapterHandle = out.Handler
+		s.NewEnforcer(context.Background(), &in2)
+	} else {
+		log.Println("Error adding default Adapter from Config:", error)
+	}
 
 	return &s
 }
@@ -92,6 +111,7 @@ func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*p
 		var err error
 		a, err = s.getAdapter(int(in.AdapterHandle))
 		if err != nil {
+
 			return &pb.NewEnforcerReply{Handler: 0}, err
 		}
 	}
@@ -143,21 +163,21 @@ func (s *Server) NewAdapter(ctx context.Context, in *pb.NewAdapterRequest) (*pb.
 }
 
 func (s *Server) parseParam(param, matcher string) (interface{}, string) {
-	if strings.HasPrefix(param, "ABAC::") {
-		attrList, err := resolveABAC(param)
-		if err != nil {
-			panic(err)
-		}
-		for k, v := range attrList.nameMap {
-			old := "." + k
-			if strings.Contains(matcher, old) {
-				matcher = strings.Replace(matcher, old, "."+v, -1)
-			}
-		}
-		return attrList, matcher
-	} else {
+	if !strings.HasPrefix(param, "ABAC::") {
 		return param, matcher
 	}
+
+	attrList, err := resolveABAC(param)
+	if err != nil {
+		panic(err)
+	}
+
+	for k, v := range attrList.nameMap {
+		old := "." + k
+		matcher = strings.Replace(matcher, old, "."+v, -1)
+	}
+
+	return attrList, matcher
 }
 
 func (s *Server) Enforce(ctx context.Context, in *pb.EnforceRequest) (*pb.BoolReply, error) {

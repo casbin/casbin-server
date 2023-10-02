@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -29,14 +30,30 @@ import (
 )
 
 var errDriverName = errors.New("currently supported DriverName: file | mysql | postgres | mssql")
+var adapters = make(map[*pb.NewAdapterRequest]persist.Adapter)
 
 func newAdapter(in *pb.NewAdapterRequest) (persist.Adapter, error) {
+	log.Println("New Adapter Request", in)
+	// Check if adapter already exists
+	if a, ok := adapters[in]; ok {
+		return a, errors.New("adapter already exists")
+
+	}
 	var a persist.Adapter
-	in = checkLocalConfig(in)
+	if _, err := os.Stat(getLocalConfigPath()); !os.IsNotExist(err) {
+		fmt.Printf("File %s exists\n", getLocalConfigPath())
+		in = checkLocalConfig(in)
+	} else {
+		log.Printf("File %s does not exist\n", getLocalConfigPath())
+	}
+	if (in == nil) || (in.ConnectString == "") || (in.DriverName == "") {
+		return nil, errDriverName
+	}
 	supportDriverNames := [...]string{"file", "mysql", "postgres", "mssql"}
 
 	switch in.DriverName {
 	case "file":
+		log.Println("File Adapter is used")
 		a = fileadapter.NewAdapter(in.ConnectString)
 	default:
 		var support = false
@@ -49,24 +66,30 @@ func newAdapter(in *pb.NewAdapterRequest) (persist.Adapter, error) {
 		if !support {
 			return nil, errDriverName
 		}
-
+		log.Println(in.DriverName, "Adapter is used")
 		var err error
 		a, err = gormadapter.NewAdapter(in.DriverName, in.ConnectString, in.DbSpecified)
 		if err != nil {
 			return nil, err
 		}
+		log.Println(a, "Adapter settings")
 	}
-
+	// Add the new adapter to the map
+	adapters[in] = a
 	return a, nil
 }
 
 func checkLocalConfig(in *pb.NewAdapterRequest) *pb.NewAdapterRequest {
-	cfg := LoadConfiguration(getLocalConfigPath())
 	if in.ConnectString == "" || in.DriverName == "" {
-		in.DriverName = cfg.Driver
-		in.ConnectString = cfg.Connection
-		in.DbSpecified = cfg.DBSpecified
+		log.Println("Empty DriverName or ConnectionString - Using Local Config")
+		in = buildLocalConfig()
 	}
+	return in
+}
+func buildLocalConfig() *pb.NewAdapterRequest {
+	cfg := LoadConfiguration(getLocalConfigPath())
+	log.Println("Config Loaded", cfg)
+	in := &pb.NewAdapterRequest{DriverName: cfg.Driver, ConnectString: cfg.Connection, DbSpecified: cfg.DBSpecified}
 	return in
 }
 
