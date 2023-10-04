@@ -68,6 +68,8 @@ service Casbin {
   rpc HasGroupingPolicy (PolicyRequest) returns (BoolReply) {}
   rpc HasNamedGroupingPolicy (PolicyRequest) returns (BoolReply) {}
 
+  rpc GetDomains(UserRoleRequest) returns (ArrayReply) {}
+
   rpc GetRolesForUser (UserRoleRequest) returns (ArrayReply) {}
   rpc GetImplicitRolesForUser (UserRoleRequest) returns (ArrayReply) {}
   rpc GetUsersForRole (UserRoleRequest) returns (ArrayReply) {}
