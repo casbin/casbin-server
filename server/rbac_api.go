@@ -21,6 +21,23 @@ import (
 	pb "github.com/casbin/casbin-server/proto"
 )
 
+// GetDomains gets the domains that a user has.
+func (s *Server) GetDomains(ctx context.Context, in *pb.UserRoleRequest) (*pb.ArrayReply, error) {
+	e, err := s.getEnforcer(int(in.EnforcerHandler))
+	if err != nil {
+		return &pb.ArrayReply{}, err
+	}
+
+	rm := e.GetModel()["g"]["g"].RM
+	if rm == nil {
+		return nil, errors.New("RoleManager is nil")
+	}
+
+	res, _ := rm.GetDomains(in.User)
+
+	return &pb.ArrayReply{Array: res}, nil
+}
+
 // GetRolesForUser gets the roles that a user has.
 func (s *Server) GetRolesForUser(ctx context.Context, in *pb.UserRoleRequest) (*pb.ArrayReply, error) {
 	e, err := s.getEnforcer(int(in.EnforcerHandler))
