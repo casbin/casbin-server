@@ -84,6 +84,22 @@ func (s *Server) addAdapter(a persist.Adapter) int {
 	return cnt
 }
 
+func (s *Server) DefaultEnforcerInit() error {
+	ctx := context.Background()
+
+	ad, err := s.NewAdapter(ctx, &pb.NewAdapterRequest{})
+	if err != nil {
+		return err
+	}
+
+	_, err = s.NewEnforcer(ctx, &pb.NewEnforcerRequest{AdapterHandle: int32(ad.Handler)})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*pb.NewEnforcerReply, error) {
 	var a persist.Adapter
 	var e *casbin.Enforcer
