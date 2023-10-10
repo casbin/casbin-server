@@ -17,10 +17,15 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
 	"net"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin-server/server"
@@ -28,7 +33,12 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
+// File for liveness probe to watch
+const LIVE_FILE = "/tmp/app_server_live"
+
 func main() {
+	serveCtx, cancelServeCtx := context.WithCancel(context.Background())
+
 	var port int
 	flag.IntVar(&port, "port", 50051, "listening port")
 	flag.Parse()
@@ -42,11 +52,53 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterCasbinServer(s, server.NewServer())
+	svr := server.NewServer()
+	pb.RegisterCasbinServer(s, svr)
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
+
+	err = svr.DefaultEnforcerInit()
+	if err != nil {
+		log.Fatalf("failed to init default enforcer: %v", err)
+	}
+
+	// Create liveness file
+	_, err = os.Create(LIVE_FILE)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+
+	go func() {
+		<-sig
+		cleanCtx, cancelCleanCtx := context.WithTimeout(serveCtx, 30*time.Second)
+
+		go func() {
+			<-cleanCtx.Done()
+
+			if cleanCtx.Err() == context.DeadlineExceeded {
+				log.Fatal("Graceful shutdown timed out... Forcing exit now...")
+			}
+		}()
+
+		log.Println("Gracefully shutdown server...")
+
+		// Remove liveness file
+		err = os.Remove(LIVE_FILE)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		cancelCleanCtx()
+		cancelServeCtx()
+	}()
+
 	log.Println("Listening on", port)
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
+
+	<-serveCtx.Done()
 }
