@@ -29,58 +29,62 @@ import (
 
 // Server is used to implement proto.CasbinServer.
 type Server struct {
-	enforcerMap map[int]*casbin.Enforcer
-	adapterMap  map[int]persist.Adapter
-	muE         sync.RWMutex
-	muA         sync.RWMutex
+	enforcerMap sync.Map
+	adapterMap  sync.Map
 }
 
 func NewServer() *Server {
 	s := Server{}
 
-	s.enforcerMap = map[int]*casbin.Enforcer{}
-	s.adapterMap = map[int]persist.Adapter{}
+	s.enforcerMap = sync.Map{}
+	s.adapterMap = sync.Map{}
 
 	return &s
 }
 
 func (s *Server) getEnforcer(handle int) (*casbin.Enforcer, error) {
-	s.muE.RLock()
-	defer s.muE.RUnlock()
+	if e, ok := s.enforcerMap.Load(handle); ok {
+		en := e.(*casbin.Enforcer)
 
-	if e, ok := s.enforcerMap[handle]; ok {
-		return e, nil
+		return en, nil
 	} else {
 		return nil, errors.New("enforcer not found")
 	}
 }
 
 func (s *Server) getAdapter(handle int) (persist.Adapter, error) {
-	s.muA.RLock()
-	defer s.muA.RUnlock()
+	if a, ok := s.adapterMap.Load(handle); ok {
+		ad := a.(persist.Adapter)
 
-	if a, ok := s.adapterMap[handle]; ok {
-		return a, nil
+		return ad, nil
 	} else {
 		return nil, errors.New("adapter not found")
 	}
 }
 
 func (s *Server) addEnforcer(e *casbin.Enforcer) int {
-	s.muE.Lock()
-	defer s.muE.Unlock()
+	cnt := 0
 
-	cnt := len(s.enforcerMap)
-	s.enforcerMap[cnt] = e
+	s.enforcerMap.Range(func(key, value interface{}) bool {
+		cnt++
+		return true
+	})
+
+	s.enforcerMap.Store(cnt, e)
+
 	return cnt
 }
 
 func (s *Server) addAdapter(a persist.Adapter) int {
-	s.muA.Lock()
-	defer s.muA.Unlock()
+	cnt := 0
 
-	cnt := len(s.adapterMap)
-	s.adapterMap[cnt] = a
+	s.adapterMap.Range(func(key, value interface{}) bool {
+		cnt++
+		return true
+	})
+
+	s.adapterMap.Store(cnt, a)
+
 	return cnt
 }
 
