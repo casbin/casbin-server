@@ -54,3 +54,5 @@ require (
 	modernc.org/memory v1.5.0 // indirect
 	modernc.org/sqlite v1.20.3 // indirect
 )
+
+replace github.com/casbin/casbin/v2 => github.com/mojila/casbin/v2 v2.77.3
