@@ -25,12 +25,17 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/persist"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // Server is used to implement proto.CasbinServer.
 type Server struct {
 	enforcerMap sync.Map
 	adapterMap  sync.Map
+	// TODO: add repository for all enforcer operations needed
+	repo IRepository
+	// TODO: add tracer for tracing
+	tracer trace.Tracer
 }
 
 func NewServer() *Server {
@@ -38,6 +43,8 @@ func NewServer() *Server {
 
 	s.enforcerMap = sync.Map{}
 	s.adapterMap = sync.Map{}
+	// TODO: init db connection and assign into repository
+	// get db credetial from env variable
 
 	return &s
 }
@@ -181,10 +188,14 @@ func (s *Server) parseParam(param, matcher string) (interface{}, string) {
 }
 
 func (s *Server) Enforce(ctx context.Context, in *pb.EnforceRequest) (*pb.BoolReply, error) {
+	// TODO: add tracer
+	// TODO: remove this check
 	e, err := s.getEnforcer(int(in.EnforcerHandler))
 	if err != nil {
 		return &pb.BoolReply{Res: false}, err
 	}
+
+	// TODO: remove param generators
 	var param interface{}
 	params := make([]interface{}, 0, len(in.Params))
 	m := e.GetModel()["m"]["m"].Value
@@ -193,6 +204,9 @@ func (s *Server) Enforce(ctx context.Context, in *pb.EnforceRequest) (*pb.BoolRe
 		param, m = s.parseParam(in.Params[index], m)
 		params = append(params, param)
 	}
+
+	// TODO: replace with repository method Enforce
+	// ok, err := s.repo.Enforce(ctx, params)
 
 	res, err := e.EnforceWithMatcher(m, params...)
 	if err != nil {

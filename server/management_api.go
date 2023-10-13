@@ -195,11 +195,17 @@ func (s *Server) AddPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolR
 }
 
 func (s *Server) AddNamedPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
+	// TODO: add tracer
+	// TODO: remove this check
 	e, err := s.getEnforcer(int(in.EnforcerHandler))
 	if err != nil {
 		return &pb.BoolReply{}, err
 	}
 
+	// TODO: replace using repository AddNamedPolicy
+	// ok, err := s.repo.AddNamedPolicy(ctx, in.PType, in.Params)
+
+	// TODO: remove this old method operation
 	ruleAdded, err := e.AddNamedPolicy(in.PType, in.Params)
 	return &pb.BoolReply{Res: ruleAdded}, err
 }
@@ -210,10 +216,15 @@ func (s *Server) RemovePolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.Bo
 }
 
 func (s *Server) RemoveNamedPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
+	// TODO: add tracer
+	// TODO: remove this check
 	e, err := s.getEnforcer(int(in.EnforcerHandler))
 	if err != nil {
 		return &pb.BoolReply{}, err
 	}
+
+	// TODO: replace using repository RemoveNamedPolicy
+	// ok, err := s.repo.RemoveNamedPolicy(ctx, in.PType, in.Params)
 
 	ruleRemoved, err := e.RemoveNamedPolicy(in.PType, in.Params)
 	return &pb.BoolReply{Res: ruleRemoved}, err
@@ -227,10 +238,15 @@ func (s *Server) RemoveFilteredPolicy(ctx context.Context, in *pb.FilteredPolicy
 
 // RemoveFilteredNamedPolicy removes an authorization rule from the current named policy, field filters can be specified.
 func (s *Server) RemoveFilteredNamedPolicy(ctx context.Context, in *pb.FilteredPolicyRequest) (*pb.BoolReply, error) {
+	// TODO: add tracer
+	// TODO: remove this check
 	e, err := s.getEnforcer(int(in.EnforcerHandler))
 	if err != nil {
 		return &pb.BoolReply{}, err
 	}
+
+	// TODO: replace using repository RemoveFilteredNamedPolicy
+	// ok, err := s.repo.RemoveFilteredNamedPolicy(ctx, in.PType, in.FieldIndex, in.FieldValues...)
 
 	ruleRemoved, err := e.RemoveFilteredNamedPolicy(in.PType, int(in.FieldIndex), in.FieldValues...)
 	return &pb.BoolReply{Res: ruleRemoved}, err
