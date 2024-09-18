@@ -9,24 +9,24 @@ import (
 )
 
 type GinContext struct {
-	ctx *gin.Context
+	Ctx *gin.Context
 }
 
 func (g *GinContext) Bind(v interface{}) error {
-	return g.ctx.Bind(v)
+	return g.Ctx.Bind(v)
 }
 
 func (g *GinContext) JSON(statusCode int, v interface{}) error {
-	g.ctx.JSON(statusCode, v)
+	g.Ctx.JSON(statusCode, v)
 	return nil
 }
 
 func (g *GinContext) Param(key string) string {
-	return g.ctx.Param(key)
+	return g.Ctx.Param(key)
 }
 
 func (g *GinContext) QueryParam(key string) string {
-	return g.ctx.Query(key)
+	return g.Ctx.Query(key)
 }
 
 type httpHandler struct{}
