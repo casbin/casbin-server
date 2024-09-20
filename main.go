@@ -69,9 +69,19 @@ func main() {
 		}
 		var r router.Router
 		r = ginRouter.New() // or echoRouter.New()
+		server := server.NewServer()
 		// Define handlers
-		h := ginHandler.NewHttpHandler()
-		r.POST("/authorize", h.Enforce)
+		h := ginHandler.NewHttpHandler(server)
+		api := r.Group("/api")
+		{
+			v1 := api.Group("/v1")
+			{
+				enforce := v1.Group("/enforce")
+				{
+					enforce.POST("", h.Enforce)
+				}
+			}
+		}
 
 		// Start the server
 		httpAddr := fmt.Sprintf(":%d", port)

@@ -6,6 +6,7 @@ type HttpHandler interface {
 
 type Context interface {
 	Bind(interface{}) error
+	ShouldBind(interface{}) error
 	JSON(int, interface{}) error
 	Param(string) string
 	QueryParam(string) string
