@@ -239,3 +239,22 @@ func TestPermissionAPI(t *testing.T) {
 	testEnforceWithoutUsers(t, e, "bob", "read", false)
 	testEnforceWithoutUsers(t, e, "bob", "write", false)
 }
+
+func testGetDomains(t *testing.T, e *testEngine, name string, res []string) {
+	t.Helper()
+	reply, err := e.s.GetDomains(e.ctx, &pb.UserRoleRequest{EnforcerHandler: e.h, User: name})
+	assert.NoError(t, err)
+
+	t.Log("Domains for ", name, ": ", reply.Array)
+
+	if !util.SetEquals(res, reply.Array) {
+		t.Error("Domains for ", name, ": ", reply.Array, ", supposed to be ", res)
+	}
+}
+
+func TestRoleDomainAPI(t *testing.T) {
+	e := newTestEngine(t, "file", "../examples/rbac_with_domains_policy.csv", "../examples/rbac_with_domains_model.conf")
+
+	testGetDomains(t, e, "alice", []string{"domain1"})
+	testGetDomains(t, e, "bob", []string{"domain2"})
+}
