@@ -16,7 +16,7 @@ package server
 
 import (
 	"context"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	pb "github.com/casbin/casbin-server/proto"
@@ -54,7 +54,7 @@ func TestRBACModel(t *testing.T) {
 		t.Error(err)
 	}
 
-	modelText, err := ioutil.ReadFile("../examples/rbac_model.conf")
+	modelText, err := os.ReadFile("../examples/rbac_model.conf")
 	if err != nil {
 		t.Error(err)
 	}
@@ -85,7 +85,7 @@ func TestABACModel(t *testing.T) {
 	s := NewServer()
 	ctx := context.Background()
 
-	modelText, err := ioutil.ReadFile("../examples/abac_model.conf")
+	modelText, err := os.ReadFile("../examples/abac_model.conf")
 	if err != nil {
 		t.Error(err)
 	}

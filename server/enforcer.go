@@ -17,7 +17,7 @@ package server
 import (
 	"context"
 	"errors"
-	"io/ioutil"
+	"os"
 	"strings"
 	"sync"
 
@@ -98,7 +98,7 @@ func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*p
 
 	if in.ModelText == "" {
 		cfg := LoadConfiguration(getLocalConfigPath())
-		data, err := ioutil.ReadFile(cfg.Enforcer)
+		data, err := os.ReadFile(cfg.Enforcer)
 		if err != nil {
 			return &pb.NewEnforcerReply{Handler: 0}, err
 		}
