@@ -1,7 +1,6 @@
 package gin
 
-import ( // Import the handler package that contains Context and HandlerFunc
-
+import (
 	ginHandler "github.com/casbin/casbin-server/handler/gin"
 	"github.com/casbin/casbin-server/router"
 	"github.com/gin-gonic/gin"
@@ -31,22 +30,22 @@ func (r *GinRouter) GET(path string, handler router.HandlerFunc) {
 
 func (r *GinRouter) POST(path string, handler router.HandlerFunc) {
 	r.engine.POST(path, func(c *gin.Context) {
-		handler(&ginHandler.GinContext{Ctx: c}) // Convert gin.Context to your custom Context
+		handler(&ginHandler.GinContext{Ctx: c})
 	})
 }
 func (r *GinRouter) PUT(path string, handler router.HandlerFunc) {
 	r.engine.PUT(path, func(c *gin.Context) {
-		handler(&ginHandler.GinContext{Ctx: c}) // Convert gin.Context to your custom Context
+		handler(&ginHandler.GinContext{Ctx: c})
 	})
 }
 func (r *GinRouter) DELETE(path string, handler router.HandlerFunc) {
 	r.engine.DELETE(path, func(c *gin.Context) {
-		handler(&ginHandler.GinContext{Ctx: c}) // Convert gin.Context to your custom Context
+		handler(&ginHandler.GinContext{Ctx: c})
 	})
 }
 func (r *GinRouter) OPTIONS(path string, handler router.HandlerFunc) {
 	r.engine.OPTIONS(path, func(c *gin.Context) {
-		handler(&ginHandler.GinContext{Ctx: c}) // Convert gin.Context to your custom Context
+		handler(&ginHandler.GinContext{Ctx: c})
 	})
 }
 func (r *GinRouter) Serve(addr string) error {
@@ -59,28 +58,28 @@ func (r *GinRouter) Group(relativePath string, handlers ...router.HandlerFunc) r
 
 func (r *GinRouterGroup) GET(path string, handler router.HandlerFunc) {
 	r.routerGroup.GET(path, func(c *gin.Context) {
-		handler(&ginHandler.GinContext{Ctx: c}) // Convert gin.Context to your custom Context
+		handler(&ginHandler.GinContext{Ctx: c})
 	})
 }
 
 func (r *GinRouterGroup) POST(path string, handler router.HandlerFunc) {
 	r.routerGroup.POST(path, func(c *gin.Context) {
-		handler(&ginHandler.GinContext{Ctx: c}) // Convert gin.Context to your custom Context
+		handler(&ginHandler.GinContext{Ctx: c})
 	})
 }
 func (r *GinRouterGroup) PUT(path string, handler router.HandlerFunc) {
 	r.routerGroup.PUT(path, func(c *gin.Context) {
-		handler(&ginHandler.GinContext{Ctx: c}) // Convert gin.Context to your custom Context
+		handler(&ginHandler.GinContext{Ctx: c})
 	})
 }
 func (r *GinRouterGroup) DELETE(path string, handler router.HandlerFunc) {
 	r.routerGroup.DELETE(path, func(c *gin.Context) {
-		handler(&ginHandler.GinContext{Ctx: c}) // Convert gin.Context to your custom Context
+		handler(&ginHandler.GinContext{Ctx: c})
 	})
 }
 func (r *GinRouterGroup) OPTIONS(path string, handler router.HandlerFunc) {
 	r.routerGroup.OPTIONS(path, func(c *gin.Context) {
-		handler(&ginHandler.GinContext{Ctx: c}) // Convert gin.Context to your custom Context
+		handler(&ginHandler.GinContext{Ctx: c})
 	})
 }
 
