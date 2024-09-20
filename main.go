@@ -21,32 +21,75 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"sync"
 
+	ginHandler "github.com/casbin/casbin-server/handler/gin"
 	pb "github.com/casbin/casbin-server/proto"
+	"github.com/casbin/casbin-server/router"
+	ginRouter "github.com/casbin/casbin-server/router/gin"
 	"github.com/casbin/casbin-server/server"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
 func main() {
-	var port int
-	flag.IntVar(&port, "port", 50051, "listening port")
-	flag.Parse()
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		var port int
+		flag.IntVar(&port, "port", 50051, "gRPC listening port")
+		flag.Parse()
 
-	if port < 1 || port > 65535 {
-		panic(fmt.Sprintf("invalid port number: %d", port))
-	}
+		if port < 1 || port > 65535 {
+			panic(fmt.Sprintf("invalid gRPC port number: %d", port))
+		}
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-	s := grpc.NewServer()
-	pb.RegisterCasbinServer(s, server.NewServer())
-	// Register reflection service on gRPC server.
-	reflection.Register(s)
-	log.Println("Listening on", port)
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
+		lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		s := grpc.NewServer()
+		pb.RegisterCasbinServer(s, server.NewServer())
+		// Register reflection service on gRPC server.
+		reflection.Register(s)
+		log.Println("gRPC listening on", port)
+		if err := s.Serve(lis); err != nil {
+			log.Fatalf("failed to gRPC serve: %v", err)
+		}
+	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		var port int
+		flag.IntVar(&port, "http-port", 8585, "http listening port")
+		flag.Parse()
+		if port < 1 || port > 65535 {
+			panic(fmt.Sprintf("invalid http port number: %d", port))
+		}
+		var r router.Router
+		r = ginRouter.New() // or echoRouter.New()
+		server := server.NewServer()
+		// Define handlers
+		h := ginHandler.NewHttpHandler(server)
+		api := r.Group("/api")
+		{
+			v1 := api.Group("/v1")
+			{
+				enforce := v1.Group("/enforce")
+				{
+					enforce.POST("", h.Enforce)
+				}
+			}
+		}
+
+		// Start the server
+		httpAddr := fmt.Sprintf(":%d", port)
+		log.Println("http listening on", httpAddr)
+		if err := r.Serve(httpAddr); err != nil {
+			log.Fatalf("failed to http serve: %v", err)
+		}
+
+	}()
+	wg.Wait()
 }

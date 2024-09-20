@@ -14,3 +14,6 @@ casbin-server
 
 .idea/
 *.iml
+
+# Environment Variables
+.env
