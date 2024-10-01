@@ -26,6 +26,7 @@ import (
 	"github.com/casbin/casbin/v2/persist"
 	fileadapter "github.com/casbin/casbin/v2/persist/file-adapter"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
+	mongodbadapter "github.com/casbin/mongodb-adapter/v3"
 )
 
 var errDriverName = errors.New("currently supported DriverName: file | mysql | postgres | mssql")
@@ -33,11 +34,17 @@ var errDriverName = errors.New("currently supported DriverName: file | mysql | p
 func newAdapter(in *pb.NewAdapterRequest) (persist.Adapter, error) {
 	var a persist.Adapter
 	in = checkLocalConfig(in)
-	supportDriverNames := [...]string{"file", "mysql", "postgres", "mssql"}
+	supportDriverNames := [...]string{"file", "mysql", "postgres", "mssql", "mongodb"}
 
 	switch in.DriverName {
 	case "file":
 		a = fileadapter.NewAdapter(in.ConnectString)
+	case "mongodb":
+		var err error
+		a, err = mongodbadapter.NewAdapter(in.ConnectString)
+		if err != nil {
+			return nil, err
+		}
 	default:
 		var support = false
 		for _, driverName := range supportDriverNames {
