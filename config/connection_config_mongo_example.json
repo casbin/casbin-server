@@ -1,0 +1,5 @@
+{
+  "driver": "mongodb",
+  "connection": "mongodb://username:password@localhost:27017/mydatabase?ssl=true&replicaSet=myReplicaSet&authSource=admin",
+  "enforcer": "examples/rbac_model.conf"
+}
