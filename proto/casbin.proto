@@ -93,6 +93,7 @@ service Casbin {
 message NewEnforcerRequest {
   string modelText = 1;
   int32 adapterHandle = 2;
+  bool enableAcceptJsonRequest = 3;
 }
 
 message NewEnforcerReply {

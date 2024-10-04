@@ -46,7 +46,12 @@ func (s *Server) GetAllNamedSubjects(ctx context.Context, in *pb.SimpleGetReques
 		return &pb.ArrayReply{}, err
 	}
 
-	return &pb.ArrayReply{Array: e.GetModel().GetValuesForFieldInPolicy("p", in.PType, 0)}, nil
+	valuesForFieldInPolicy, err := e.GetModel().GetValuesForFieldInPolicy("p", in.PType, 0)
+	if err != nil {
+		return &pb.ArrayReply{}, err
+	}
+
+	return &pb.ArrayReply{Array: valuesForFieldInPolicy}, nil
 }
 
 // GetAllObjects gets the list of objects that show up in the current policy.
@@ -61,7 +66,12 @@ func (s *Server) GetAllNamedObjects(ctx context.Context, in *pb.SimpleGetRequest
 		return &pb.ArrayReply{}, err
 	}
 
-	return &pb.ArrayReply{Array: e.GetModel().GetValuesForFieldInPolicy("p", in.PType, 1)}, nil
+	valuesForFieldInPolicy, err := e.GetModel().GetValuesForFieldInPolicy("p", in.PType, 1)
+	if err != nil {
+		return &pb.ArrayReply{}, err
+	}
+
+	return &pb.ArrayReply{Array: valuesForFieldInPolicy}, nil
 }
 
 // GetAllActions gets the list of actions that show up in the current policy.
@@ -76,7 +86,12 @@ func (s *Server) GetAllNamedActions(ctx context.Context, in *pb.SimpleGetRequest
 		return &pb.ArrayReply{}, err
 	}
 
-	return &pb.ArrayReply{Array: e.GetModel().GetValuesForFieldInPolicy("p", in.PType, 2)}, nil
+	valuesForFieldInPolicy, err := e.GetModel().GetValuesForFieldInPolicy("p", in.PType, 2)
+	if err != nil {
+		return &pb.ArrayReply{}, err
+	}
+
+	return &pb.ArrayReply{Array: valuesForFieldInPolicy}, nil
 }
 
 // GetAllRoles gets the list of roles that show up in the current policy.
@@ -91,7 +106,12 @@ func (s *Server) GetAllNamedRoles(ctx context.Context, in *pb.SimpleGetRequest) 
 		return &pb.ArrayReply{}, err
 	}
 
-	return &pb.ArrayReply{Array: e.GetModel().GetValuesForFieldInPolicy("g", in.PType, 1)}, nil
+	valuesForFieldInPolicy, err := e.GetModel().GetValuesForFieldInPolicy("g", in.PType, 1)
+	if err != nil {
+		return &pb.ArrayReply{}, err
+	}
+
+	return &pb.ArrayReply{Array: valuesForFieldInPolicy}, nil
 }
 
 // GetPolicy gets all the authorization rules in the policy.
@@ -106,7 +126,12 @@ func (s *Server) GetNamedPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.
 		return &pb.Array2DReply{}, err
 	}
 
-	return s.wrapPlainPolicy(e.GetModel().GetPolicy("p", in.PType)), nil
+	policy, err := e.GetModel().GetPolicy("p", in.PType)
+	if err != nil {
+		return &pb.Array2DReply{}, err
+	}
+
+	return s.wrapPlainPolicy(policy), nil
 }
 
 // GetFilteredPolicy gets all the authorization rules in the policy, field filters can be specified.
@@ -123,7 +148,12 @@ func (s *Server) GetFilteredNamedPolicy(ctx context.Context, in *pb.FilteredPoli
 		return &pb.Array2DReply{}, err
 	}
 
-	return s.wrapPlainPolicy(e.GetModel().GetFilteredPolicy("p", in.PType, int(in.FieldIndex), in.FieldValues...)), nil
+	filteredPolicy, err := e.GetModel().GetFilteredPolicy("p", in.PType, int(in.FieldIndex), in.FieldValues...)
+	if err != nil {
+		return &pb.Array2DReply{}, err
+	}
+
+	return s.wrapPlainPolicy(filteredPolicy), nil
 }
 
 // GetGroupingPolicy gets all the role inheritance rules in the policy.
@@ -138,7 +168,12 @@ func (s *Server) GetNamedGroupingPolicy(ctx context.Context, in *pb.PolicyReques
 		return &pb.Array2DReply{}, err
 	}
 
-	return s.wrapPlainPolicy(e.GetModel().GetPolicy("g", in.PType)), nil
+	policy, err := e.GetModel().GetPolicy("g", in.PType)
+	if err != nil {
+		return &pb.Array2DReply{}, err
+	}
+
+	return s.wrapPlainPolicy(policy), nil
 }
 
 // GetFilteredGroupingPolicy gets all the role inheritance rules in the policy, field filters can be specified.
@@ -155,7 +190,12 @@ func (s *Server) GetFilteredNamedGroupingPolicy(ctx context.Context, in *pb.Filt
 		return &pb.Array2DReply{}, err
 	}
 
-	return s.wrapPlainPolicy(e.GetModel().GetFilteredPolicy("g", in.PType, int(in.FieldIndex), in.FieldValues...)), nil
+	filteredPolicy, err := e.GetModel().GetFilteredPolicy("g", in.PType, int(in.FieldIndex), in.FieldValues...)
+	if err != nil {
+		return &pb.Array2DReply{}, err
+	}
+
+	return s.wrapPlainPolicy(filteredPolicy), nil
 }
 
 // HasPolicy determines whether an authorization rule exists.
@@ -170,7 +210,12 @@ func (s *Server) HasNamedPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.
 		return &pb.BoolReply{}, err
 	}
 
-	return &pb.BoolReply{Res: e.GetModel().HasPolicy("p", in.PType, in.Params)}, nil
+	hasPolicy, err := e.GetModel().HasPolicy("p", in.PType, in.Params)
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
+
+	return &pb.BoolReply{Res: hasPolicy}, nil
 }
 
 // HasGroupingPolicy determines whether a role inheritance rule exists.
@@ -186,7 +231,12 @@ func (s *Server) HasNamedGroupingPolicy(ctx context.Context, in *pb.PolicyReques
 		return &pb.BoolReply{}, err
 	}
 
-	return &pb.BoolReply{Res: e.GetModel().HasPolicy("g", in.PType, in.Params)}, nil
+	haPolicy, err := e.GetModel().HasPolicy("g", in.PType, in.Params)
+	if err != nil {
+		return &pb.BoolReply{}, err
+	}
+
+	return &pb.BoolReply{Res: haPolicy}, nil
 }
 
 func (s *Server) AddPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {

@@ -59,7 +59,7 @@ func TestRBACModel(t *testing.T) {
 		t.Error(err)
 	}
 
-	resp, err := s.NewEnforcer(ctx, &pb.NewEnforcerRequest{ModelText: string(modelText), AdapterHandle: 0})
+	resp, err := s.NewEnforcer(ctx, &pb.NewEnforcerRequest{ModelText: string(modelText), AdapterHandle: 0, EnableAcceptJsonRequest: false})
 	if err != nil {
 		t.Error(err)
 	}
@@ -90,7 +90,7 @@ func TestABACModel(t *testing.T) {
 		t.Error(err)
 	}
 
-	resp, err := s.NewEnforcer(ctx, &pb.NewEnforcerRequest{ModelText: string(modelText), AdapterHandle: -1})
+	resp, err := s.NewEnforcer(ctx, &pb.NewEnforcerRequest{ModelText: string(modelText), AdapterHandle: -1, EnableAcceptJsonRequest: false})
 	if err != nil {
 		t.Error(err)
 	}
