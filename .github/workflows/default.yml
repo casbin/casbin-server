@@ -89,6 +89,6 @@ jobs:
         if: github.repository == 'casbin/casbin-server' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           target: STANDARD
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: casbin/casbin-server:${{steps.get-current-tag.outputs.tag }},casbin/casbin-server:latest

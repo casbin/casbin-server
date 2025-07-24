@@ -1,11 +1,39 @@
 Casbin Server
 ====
 
-[![GitHub Actions](https://github.com/casbin/casbin-server/actions/workflows/default.yml/badge.svg)](https://github.com/casbin/casbin-server/actions)
-[![Docker](https://img.shields.io/docker/automated/casbin/casbin-server)](https://hub.docker.com/r/casbin/casbin-server/builds/)
-[![Docker Image Version (latest by date)](https://img.shields.io/docker/v/casbin/casbin-server?label=image%20version)](https://hub.docker.com/r/casbin/casbin-server/tags)
-[![Coverage Status](https://coveralls.io/repos/github/casbin/casbin-server/badge.svg?branch=master)](https://coveralls.io/github/casbin/casbin-server?branch=master)
-[![Godoc](https://godoc.org/github.com/casbin/casbin-server?status.svg)](https://godoc.org/github.com/casbin/casbin-server)
+<p align="center">
+  <a href="#badge">
+    <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
+  </a>
+  <a href="https://hub.docker.com/r/casbin/casbin-server">
+    <img alt="docker pull casbin/casbin-server" src="https://img.shields.io/docker/pulls/casbin/casbin-server.svg">
+  </a>
+  <a href="https://github.com/casbin/casbin-server/actions/workflows/default.yml">
+    <img alt="GitHub Workflow Status (branch)" src="https://github.com/casbin/casbin-server/workflows/Build/badge.svg?style=flat-square">
+  </a>
+  <a href="https://github.com/casbin/casbin-server/releases/latest">
+    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/casbin/casbin-server.svg">
+  </a>
+  <a href="https://coveralls.io/github/casbin/casbin-server?branch=master">
+    <img alt="Coverage Status" src="https://coveralls.io/repos/github/casbin/casbin-server/badge.svg?branch=master">
+  </a>
+  <a href="https://hub.docker.com/r/casbin/casbin-server">
+    <img alt="Docker Image Version (latest semver)" src="https://img.shields.io/badge/Docker%20Hub-latest-brightgreen">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://goreportcard.com/report/github.com/casbin/casbin-server">
+    <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/casbin/casbin-server?style=flat-square">
+  </a>
+  <a href="https://github.com/casbin/casbin-server/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/casbin/casbin-server?style=flat-square" alt="license">
+  </a>
+  <a href="https://discord.gg/5rPsrAzK7S">
+    <img alt="Discord" src="https://img.shields.io/discord/1022748306096537660?style=flat-square&logo=discord&label=discord&color=5865F2">
+  </a>
+</p>
+
 
 Casbin Server is the ``Access Control as a Service (ACaaS)`` solution based on [Casbin](https://github.com/casbin/casbin). It provides [gRPC](https://grpc.io/) interface for Casbin authorization.
 
