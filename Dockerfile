@@ -21,10 +21,12 @@ RUN curl -LjO https://github.com/protocolbuffers/protobuf/archive/refs/tags/v3.1
     rm v3.17.3.zip
 
 # Go environment variable to enable Go modules
+ARG TARGETOS
+ARG TARGETARCH
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
-    GOOS=linux \
-    GOARCH=amd64
+    GOOS=${TARGETOS} \
+    GOARCH=${TARGETARCH}
 
 # Download dependencies
 RUN go mod download
