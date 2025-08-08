@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"regexp"
 	"strings"
@@ -27,9 +28,30 @@ import (
 	fileadapter "github.com/casbin/casbin/v2/persist/file-adapter"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	mongodbadapter "github.com/casbin/mongodb-adapter/v3"
+	redisadapter "github.com/casbin/redis-adapter/v3"
 )
 
 var errDriverName = errors.New("currently supported DriverName: file | mysql | postgres | mssql")
+
+func parseRedisUrl(redisURL string) (host, port, username, password string, err error) {
+	if redisURL == "" {
+		return "", "", "", "", errors.New("redis URL cannot be empty")
+	}
+	if !strings.Contains(redisURL, "://") {
+		redisURL = "redis://" + redisURL
+	}
+	u, err := url.Parse(redisURL)
+	if err != nil {
+		return "", "", "", "", err
+	}
+	host = u.Hostname()
+	port = u.Port()
+	if u.User != nil {
+		username = u.User.Username()
+		password, _ = u.User.Password()
+	}
+	return host, port, username, password, nil
+}
 
 func newAdapter(in *pb.NewAdapterRequest) (persist.Adapter, error) {
 	var a persist.Adapter
@@ -42,6 +64,24 @@ func newAdapter(in *pb.NewAdapterRequest) (persist.Adapter, error) {
 	case "mongodb":
 		var err error
 		a, err = mongodbadapter.NewAdapter(in.ConnectString)
+		if err != nil {
+			return nil, err
+		}
+	case "redis":
+		var err error
+		host, port, username, password, err := parseRedisUrl(in.ConnectString)
+		if err != nil {
+			return nil, err
+		}
+		hostWithPort := fmt.Sprintf("%s:%s", host, port)
+
+		config := &redisadapter.Config{
+			Network:  "tcp",
+			Address:  hostWithPort,
+			Username: username,
+			Password: password,
+		}
+		a, err = redisadapter.NewAdapter(config)
 		if err != nil {
 			return nil, err
 		}
